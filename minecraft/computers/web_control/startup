@@ -2,5 +2,8 @@
 shell.run("delete signal_reciever.lua")
 shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/computers/web_control/signal_reciever.lua")
 
+shell.run("delete json")
+shell.run("wget https://pastebin.com/raw/4nRg9CHU -O json")
+
 -- run script
 shell.run("./signal_reciever")
