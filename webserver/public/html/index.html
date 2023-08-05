@@ -1,0 +1,72 @@
+<html>
+
+<head>
+    <title>YurtleCC</title>
+    <script src="js/websocketHelper.js"></script>
+    <link rel="stylesheet" href="css/base.css">
+</head>
+
+<body>
+    <div id="wsEventLog" class="widget">
+        <template id="wsEventTemplate">
+            <div class="wsEvent">
+                <h2 class="eventType"></h2>
+                <h3 class="eventTimestamp"></h3>
+                <pre class="eventData"></pre>
+            </div>
+        </template>
+    </div>
+    <script>
+        var UUID;
+        const ccSocket = new WebSocket(
+            wsurl(""),
+            "websiteClient",
+        );
+
+        ccSocket.onopen = (event) => {
+            console.log("Websocket opened");
+        };
+
+        const messageTypes = {
+            init: wsInit,
+        }
+        ccSocket.onmessage = (event) => {
+            let message = JSON.parse(event.data);
+            if (messageTypes[message.type] != null) {
+                messageTypes[message.type](message);
+            } else {
+                wsLog(message);
+            }
+        }
+
+        function wsInit(message) {
+            wsLog(message, "Websocket Initialized");
+        }
+
+        function wsLog(message, type) {
+            let node = getWsEventNode();
+            node.querySelector(".eventType").textContent = type??message.type;
+            node.querySelector(".eventTimestamp").textContent = new Date(message.timestamp).toLocaleString();
+            node.querySelector(".eventData").textContent = JSON.stringify(message.data, null, "\t");
+            appendEventNode(node);
+        }
+
+        function getWsEventNode() {
+            return document.querySelector("#wsEventTemplate").content.cloneNode(true);
+        }
+
+        function appendEventNode(node) {
+            document.querySelector("#wsEventLog").prepend(node);
+        }
+
+        function pingWS() {
+            ccSocket.send(JSON.stringify({
+                "type": "ping",
+                "data": {},
+                "timestamp": Date.now()
+            }))
+        }
+    </script>
+</body>
+
+</html>
