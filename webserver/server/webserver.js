@@ -95,6 +95,19 @@ app.ws('/:channel', function (ws, req) {
             }
         }
     });
+
+    ws.on("close", function (msg) {
+        sendMsgToAll(channel, "webConnections", {
+            type: "other client disconnected",
+            data: {
+                sender: UUID,
+            },
+            timestamp: Date.now()
+        });
+        console.log(`${UUID} has disconnected`);
+
+        delete wsConnections[channel].webConnections[UUID];
+    })
 });
 
 function sendMsgToAll(channel, connTypes, message) {
