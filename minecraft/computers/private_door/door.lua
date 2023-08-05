@@ -2,12 +2,13 @@ local params = {...}
 
 local players = peripheral.find("playerDetector")
 
+local pos1 = {x=tonumber(params[0]), y=tonumber(params[1]), z=tonumber(params[2])}
+local pos2 = {x=tonumber(params[3]), y=tonumber(params[4]), z=tonumber(params[5])}
+
 while true do
     os.startTimer(1)
     os.pullEvent("timer")
 
-    local pos1 = {x=params[0], y=params[1], z=params[2]}
-    local pos2 = {x=params[3], y=params[4], z=params[5]}
     local result = players.isPlayersInCoords(pos1, pos2)
 
     redstone.setOutput("back", result)
