@@ -2,8 +2,8 @@ local params = {...}
 
 local players = peripheral.find("playerDetector")
 
-local pos1 = {x=tonumber(params[0]), y=tonumber(params[1]), z=tonumber(params[2])}
-local pos2 = {x=tonumber(params[3]), y=tonumber(params[4]), z=tonumber(params[5])}
+local pos1 = {x=tonumber(params[1]), y=tonumber(params[2]), z=tonumber(params[3])}
+local pos2 = {x=tonumber(params[4]), y=tonumber(params[5]), z=tonumber(params[6])}
 
 while true do
     os.startTimer(1)
