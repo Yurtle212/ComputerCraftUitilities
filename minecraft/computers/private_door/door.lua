@@ -8,7 +8,7 @@ while true do
     local pos2 = {x=702, y=66, z=-1507}
     local result = players.isPlayersInCoords(pos1, pos2)
 
-    redstone.setOutput("bottom", result)
+    redstone.setOutput("back", result)
 
     print("tick")
 end
