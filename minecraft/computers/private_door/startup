@@ -1,0 +1,6 @@
+-- get latest version
+shell.run("delete door.lua")
+shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/computers/private_door/door.lua")
+
+-- run script
+shell.run("./door.lua")
