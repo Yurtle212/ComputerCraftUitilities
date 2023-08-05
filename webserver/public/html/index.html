@@ -22,25 +22,38 @@
     </div>
     <script>
         var UUID;
-        const ccSocket = new WebSocket(
-            wsurl(""),
-            "websiteClient",
-        );
+        var ccSocket;
 
-        ccSocket.onopen = (event) => {
-            console.log("Websocket opened");
-        };
+        function initWebsocket() {
+            ccSocket = new WebSocket(
+                wsurl(""),
+                "websiteClient",
+            );
+
+            ccSocket.onopen = (event) => {
+                console.log("Websocket opened");
+            };
+
+            ccSocket.onclose = (event) => {
+                setTimeout(initWebsocket, 500);
+            }
+
+            ccSocket.onerror = (event) => {
+                console.log(event);
+            }
+
+            ccSocket.onmessage = (event) => {
+                let message = JSON.parse(event.data);
+                if (messageTypes[message.type] != null) {
+                    messageTypes[message.type](message);
+                } else {
+                    wsLog(message);
+                }
+            }
+        }
 
         const messageTypes = {
             init: wsInit,
-        }
-        ccSocket.onmessage = (event) => {
-            let message = JSON.parse(event.data);
-            if (messageTypes[message.type] != null) {
-                messageTypes[message.type](message);
-            } else {
-                wsLog(message);
-            }
         }
 
         function wsInit(message) {
@@ -50,7 +63,7 @@
 
         function wsLog(message, type) {
             let node = getWsEventNode();
-            node.querySelector(".eventType").textContent = type??message.type;
+            node.querySelector(".eventType").textContent = type ?? message.type;
             node.querySelector(".eventTimestamp").textContent = new Date(message.timestamp).toLocaleString();
             node.querySelector(".eventData").textContent = JSON.stringify(message.data, null, "\t");
             appendEventNode(node);
@@ -83,6 +96,8 @@
                 "timestamp": Date.now()
             }))
         }
+
+        initWebsocket();
     </script>
 </body>
 

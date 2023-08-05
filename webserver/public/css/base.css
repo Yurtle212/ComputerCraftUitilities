@@ -55,6 +55,7 @@ body {
 
 .wsEvent {
     width: 50vw;
+    padding: 20px;
     min-width: fit-content;
     height: max-content;
     margin: 10px;

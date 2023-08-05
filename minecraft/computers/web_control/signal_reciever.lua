@@ -8,9 +8,18 @@ else
     WS = assert(http.websocket("wss://yurtle.net/cc/" .. params[1]))
 end
 
+UUID = "ccDefault"
+
 while true do
-    local raw = WS.receive()
-    UUID = "ccDefault"
+    local raw = WS.receive(59)
+    if (raw == nil) then
+        if next(params) == nil then
+            WS = assert(http.websocket("wss://yurtle.net/cc/default"))
+        else
+            WS = assert(http.websocket("wss://yurtle.net/cc/" .. params[1]))
+        end
+    end
+
 
     if (raw ~= nil) then
         local signal = json.decode(raw)

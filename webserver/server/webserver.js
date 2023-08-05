@@ -55,16 +55,6 @@ app.ws('/:channel', function (ws, req) {
             ws: ws
         };
 
-        // for (let c in wsConnections[channel].webConnections) {
-        //     wsConnections[channel].webConnections[c].ws
-        //     .send(JSON.stringify({
-        //         type: "ccJoin",
-        //         data: {
-        //             UUID: UUID,
-        //         },
-        //         timestamp: Date.now()
-        //     }))
-        // }
         sendMsgToAll(channel, "webConnections", {
             type: "ccJoin",
             data: {
@@ -94,6 +84,12 @@ app.ws('/:channel', function (ws, req) {
         } else {
             if (isWebConnection) {
                 if (msg.type == "signal") {
+                    sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);
+                }
+            } else {
+                if (msg.type == "ack") {
+                    msg.data.UUID = UUID;
+                    msg.timestamp = Date.now();
                     sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);
                 }
             }
