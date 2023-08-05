@@ -1,0 +1,6 @@
+-- get latest version
+shell.run("delete door.lua")
+shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/computers/web_control/signal_reciever.lua")
+
+-- run script
+shell.run("./door.lua 705 62 -1511 702 66 -1507")

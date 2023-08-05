@@ -16,6 +16,10 @@
             </div>
         </template>
     </div>
+    <div id="wsSignaler" class="widget">
+        <input id="signalText" type="text" placeholder="signal" value="test" />
+        <button onclick="sendSignal()">Send Signal</button>
+    </div>
     <script>
         var UUID;
         const ccSocket = new WebSocket(
@@ -40,6 +44,7 @@
         }
 
         function wsInit(message) {
+            UUID = message.data.UUID;
             wsLog(message, "Websocket Initialized");
         }
 
@@ -63,6 +68,18 @@
             ccSocket.send(JSON.stringify({
                 "type": "ping",
                 "data": {},
+                "timestamp": Date.now()
+            }))
+        }
+
+        function sendSignal() {
+            console.log("signal")
+            ccSocket.send(JSON.stringify({
+                "type": "signal",
+                "data": {
+                    sender: UUID,
+                    signal: document.querySelector("#signalText").value,
+                },
                 "timestamp": Date.now()
             }))
         }

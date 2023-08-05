@@ -24,32 +24,14 @@ app.ws('/:channel', function (ws, req) {
     let UUID = crypto.randomUUID();
     let channel = req.params.channel;
 
+    let isWebConnection = ws.protocol == "websiteClient";
+
     if (wsConnections[channel] == null) {
         wsConnections[channel] = {
             ccConnections: {},
             webConnections: {}
         }
     }
-
-    console.log("\n")
-    switch (ws.protocol) {
-        case "websiteClient":
-            console.log(`Web connection`);
-            wsConnections[channel].webConnections[UUID] = {
-                channel: channel,
-                ws: ws
-            };
-            break;
-        case "ccClient":
-            console.log("ComputerCraft Connection");
-            wsConnections[channel].ccConnections[UUID] = {
-                channel: channel,
-                ws: ws
-            };
-            break;
-    }
-    console.log(`Channel: ${channel}`)
-    console.log(`UUID: ${UUID}`)
 
     ws.send(JSON.stringify({
         type: "init",
@@ -58,6 +40,41 @@ app.ws('/:channel', function (ws, req) {
         },
         timestamp: Date.now()
     }))
+
+    console.log("\n")
+    if (isWebConnection) {
+        console.log(`Web connection`);
+        wsConnections[channel].webConnections[UUID] = {
+            channel: channel,
+            ws: ws
+        };
+    } else {
+        console.log("ComputerCraft Connection");
+        wsConnections[channel].ccConnections[UUID] = {
+            channel: channel,
+            ws: ws
+        };
+
+        // for (let c in wsConnections[channel].webConnections) {
+        //     wsConnections[channel].webConnections[c].ws
+        //     .send(JSON.stringify({
+        //         type: "ccJoin",
+        //         data: {
+        //             UUID: UUID,
+        //         },
+        //         timestamp: Date.now()
+        //     }))
+        // }
+        sendMsgToAll(channel, "webConnections", {
+            type: "ccJoin",
+            data: {
+                sender: UUID,
+            },
+            timestamp: Date.now()
+        });
+    }
+    console.log(`Channel: ${channel}`)
+    console.log(`UUID: ${UUID}`)
 
     ws.on('message', function (msg) {
         msg = JSON.parse(msg);
@@ -74,9 +91,28 @@ app.ws('/:channel', function (ws, req) {
                 },
                 timestamp: Date.now()
             }))
+        } else {
+            if (isWebConnection) {
+                if (msg.type == "signal") {
+                    sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);
+                }
+            }
         }
     });
 });
+
+function sendMsgToAll(channel, connTypes, message) {
+    if (!Array.isArray(connTypes)) {
+        connTypes = [connTypes]
+    }
+
+    for (let t in connTypes) {
+        let connType = connTypes[t];
+        for (let c in wsConnections[channel][connType]) {
+            wsConnections[channel][connType][c].ws.send(JSON.stringify(message))
+        }
+    }
+}
 
 app.use(function (req, res, next) {
     res.status(404).send("404");
