@@ -15,7 +15,10 @@ while true do
         local signal = json.decode(raw)
         if (signal.type == "signal") then
             for key, value in pairs(signal.data.signal) do
-                print(value)
+                print("Running: " .. value)
+                if (fs.exists(value[1])) then
+                    shell.run(table.concat(value, " "));
+                end
             end
         else
             print(signal.type)
