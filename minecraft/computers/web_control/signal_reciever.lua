@@ -1,6 +1,6 @@
 os.loadAPI("json")
 
-local params = {...}
+local params = { ... }
 
 if next(params) == nil then
     WS = assert(http.websocket("wss://yurtle.net/cc/default"))
@@ -11,15 +11,12 @@ end
 while true do
     local raw = WS.receive()
     print(raw)
-    if (raw == nil) then
-        goto continue
-    end
-
-    local signal = json.decode(raw)
-    if (signal.type == "signal") then
-        for key, value in pairs(signal.data.signal) do
-            print(value)
+    if (raw ~= nil) then
+        local signal = json.decode(raw)
+        if (signal.type == "signal") then
+            for key, value in pairs(signal.data.signal) do
+                print(value)
+            end
         end
     end
-    ::continue::
 end
