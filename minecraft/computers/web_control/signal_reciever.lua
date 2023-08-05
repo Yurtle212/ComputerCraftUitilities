@@ -10,6 +10,7 @@ end
 
 while true do
     local raw = WS.receive()
+    UUID = "ccDefault"
 
     if (raw ~= nil) then
         local signal = json.decode(raw)
@@ -17,11 +18,30 @@ while true do
             for key, value in pairs(signal.data.signal) do
                 print("Attempting to run: " .. table.concat(value, " "))
                 if (fs.exists(value[1])) then
-                    shell.run(table.concat(value, " "));
+                    local ran = shell.run(table.concat(value, " "));
+                    local ack = {
+                        type = "ack",
+                        data = {
+                            UUID = UUID,
+                            success = ran
+                        },
+                        timestamp = os.time()
+                    }
+                    WS.send(json.encode(ack))
+                else
+                    local ack = {
+                        type = "ack",
+                        data = {
+                            UUID = UUID,
+                            success = false
+                        },
+                        timestamp = os.time()
+                    }
+                    WS.send(json.encode(ack))
                 end
             end
-        else
-            print(signal.type)
+        elseif signal.type == "init" then
+            UUID = signal.data.UUID
         end
     end
 end
