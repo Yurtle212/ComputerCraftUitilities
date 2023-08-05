@@ -11,7 +11,9 @@ else
 end
 
 while true do
-    local signal = json.decode(WS.receive())
+    local raw = WS.receive()
+    print(raw)
+    local signal = json.decode(raw)
     if (signal.type == "signal") then
         for key, value in pairs(signal.data.signal) do
             print(value)
