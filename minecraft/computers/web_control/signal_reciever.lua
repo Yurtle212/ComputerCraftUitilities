@@ -10,11 +10,16 @@ end
 
 while true do
     local raw = WS.receive()
-    print(raw[1])
-    local signal = json.decode(raw[1])
+    print(raw)
+    if (raw == nil) then
+        goto continue
+    end
+
+    local signal = json.decode(raw)
     if (signal.type == "signal") then
         for key, value in pairs(signal.data.signal) do
             print(value)
         end
     end
+    ::continue::
 end
