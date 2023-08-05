@@ -11,12 +11,12 @@ end
 UUID = "ccDefault"
 
 while true do
-    local raw = WS.receive(58)
+    local raw = WS.receive()
     if (raw == nil) then
         print("re-init")
-        os.startTimer(1)
+        os.startTimer(2)
         os.pullEvent("timer")
-        
+
         if next(params) == nil then
             WS = assert(http.websocket("wss://yurtle.net/cc/default"))
         else

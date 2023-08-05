@@ -104,7 +104,7 @@ app.ws('/:channel', function (ws, req) {
             },
             timestamp: Date.now()
         });
-        console.log(`${UUID} has disconnected`);
+        console.log(`\n${UUID} has disconnected`);
 
         delete wsConnections[channel].webConnections[UUID];
     })
