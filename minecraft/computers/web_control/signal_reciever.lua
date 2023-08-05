@@ -17,6 +17,8 @@ while true do
             for key, value in pairs(signal.data.signal) do
                 print(value)
             end
+        else
+            print(signal.type)
         end
     end
 end
