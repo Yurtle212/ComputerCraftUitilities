@@ -1,12 +1,9 @@
--- get latest version
-shell.run("delete startup")
-shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup")
+if (turtle.getFuelLevel() <= 0) then
+    turtle.suck(1)
+    turtle.refuel()
+end
 
-shell.run("delete hiveminer.lua")
-shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/signal_reciever.lua")
+turtle.turnLeft()
+turtle.forward()
 
-shell.run("delete json")
-shell.run("wget https://pastebin.com/raw/4nRg9CHU json")
-
--- run script
-shell.run("./signal_reciever")
+shell.run("disk/setup")
