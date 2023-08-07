@@ -87,7 +87,10 @@ local function turnDirection(dir, turn)
 end
 
 local function move(pos, way, dir)
+    local retVal
+
     if way == "forward" then
+        retVal = turtle.forward
         if dir == 1 then
             pos.z = pos.z - 1
         elseif dir == 2 then
@@ -98,12 +101,14 @@ local function move(pos, way, dir)
             pos.x = pos.x + 1
         end
     elseif way == "up" then
+        retVal = turtle.up
         pos.y = pos.y + 1
     else
+        retVal = turtle.down
         pos.y = pos.y - 1
     end
 
-    return pos
+    return pos, retVal
 end
 
 function CalculateMiningPaths(startPos, subdivisions)
@@ -134,7 +139,7 @@ function CalculateMiningPaths(startPos, subdivisions)
         end
 
         for z = 1, math.abs(distFromStart.z), 1 do
-            value.instructions[instructionsIndex] = move(pos, "forward", dir)
+            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
             instructionsIndex = instructionsIndex + 1
         end
 
@@ -147,7 +152,7 @@ function CalculateMiningPaths(startPos, subdivisions)
         end
 
         for x = 1, math.abs(distFromStart.x), 1 do
-            value.instructions[instructionsIndex] = move(pos, "forward", dir)
+            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
             instructionsIndex = instructionsIndex + 1
         end
 
@@ -183,7 +188,7 @@ function CalculateMiningPaths(startPos, subdivisions)
         end
 
         for z = 1, math.abs(dirToBaseStart.z), 1 do
-            value.instructions[instructionsIndex] = move(pos, "forward", dir)
+            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
             instructionsIndex = instructionsIndex + 1
         end
 
@@ -196,7 +201,7 @@ function CalculateMiningPaths(startPos, subdivisions)
         end
 
         for x = 1, math.abs(dirToBaseStart.x), 1 do
-            value.instructions[instructionsIndex] = move(pos, "forward", dir)
+            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
             instructionsIndex = instructionsIndex + 1
         end
 
