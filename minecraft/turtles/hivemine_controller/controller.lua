@@ -1,3 +1,4 @@
+local yurtle = require "yurtle"
 os.loadAPI("json")
 
 function UpdateSetup(channel)
@@ -412,7 +413,82 @@ function CalculateCosts(travelCost, bots)
     return travelCost + miningCosts
 end
 
-function DeployMiner(instructions)
+function RetrieveItemFromStorage(rsBridge, order, depositDirection)
+    local items = rsBridge.listItems()
+    if (order.item == "fuel") then
+        local fuelGotten = 0
+        local itemsForExport = {
+
+        }
+        
+        for key, value in pairs(yurtle.fuelItems) do
+            local item = rsBridge.getItem({name=key})
+            if (item.amount > 0) then
+            end
+
+            local fuelAmount = 0
+            for i = 1, item.amount, 1 do
+                if (fuelGotten + value <= order.amount) then
+                    fuelAmount = fuelAmount + 1
+                    fuelGotten = fuelGotten + value
+                else
+                    break
+                end
+            end
+
+            itemsForExport[#itemsForExport+1] = {
+                name = key,
+                amount = fuelToTake
+            }
+        end
+
+        for i = #itemsForExport, 1, -1 do
+            if rsBridge.getItem(itemsForExport[i].name).amount > itemsForExport[i].amount then
+                itemsForExport[i].amount = itemsForExport[i].amount + 1
+                fuelGotten = fuelGotten + yurtle.fuelItems[itemsForExport[i].name]
+
+                if fuelGotten >= order.amount then
+                    break
+                end
+            end
+        end
+
+        for i = 1, #itemsForExport, 1 do
+            rsBridge.exportItem(itemsForExport[i], depositDirection)
+        end
+    end
+end
+
+function DeployMiner(instructions, rsBridge, cost)
+    local slot = yurtle.findItemInInventory("computercraft:turtle_normal")
+    if (slot == nil) then
+        return
+    end
+
+    turtle.select(slot)
+    turtle.place()
+
+    local event, sender, message, protocol = os.pullEvent("modem_message")
+
+    local neededFuel = cost - message
+
+    local success = RetrieveItemFromStorage(rsBridge, {
+        item = "fuel",
+        amount = neededFuel
+    }, "west")
+
+    if not success then
+        return
+    end
+
+    for i = 1, 16, 1 do
+        slot = yurtle.findItemInInventory("fuel")
+        if (slot == nil) then
+            break
+        end
+        turtle.select(slot)
+        turtle.drop()
+    end
     
 end
 
@@ -426,8 +502,6 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local pos = vector.new(Position.x, Position.y, Position.z)
 
     if not Config["debug_executePath"] then
-        pos, tmp = move(pos, "forward", dir)
-        dir, tmp = turnDirection(dir, "left")
         pos, tmp = move(pos, "forward", dir)
     end
 
@@ -453,6 +527,16 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         Debug_PerformPath(travelInstructions, true)
         Debug_PerformPath(instructions, false)
         Debug_PerformPath(travelInstructionsBack, true)
+    end
+
+    local rsBridge = peripheral.find("rsBridge")
+    
+    local modem = peripheral.wrap("bottom")
+    for i = 1, 1, 1 do
+        local builtInstruction = TableConcat(travelInstructions, instructions[i])
+        builtInstruction = TableConcat(builtInstruction, travelInstructionsBack)
+
+        DeployMiner(builtInstruction, rsBridge, instructions[i].cost + travelCost)
     end
 end
 

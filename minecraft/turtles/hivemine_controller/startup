@@ -7,6 +7,9 @@ shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilit
 shell.run("delete controller.lua")
 shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hivemine_controller/controller.lua")
 
+shell.run("delete yurtle.lua")
+shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/yurtle.lua")
+
 shell.run("delete json")
 shell.run("wget https://pastebin.com/raw/4nRg9CHU json")
 
