@@ -43,7 +43,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
 
             subdivisions[index] = {
                 startPos = vector.new(subdivisionSize.x * (x - 1), 0, subdivisionSize.z * (z - 1)),
-                endPos = vector.new((subdivisionSize.x * (x - 1)) + subdivisionSize.x, subdivisionSize.y,
+                endPos = vector.new((subdivisionSize.x * (x - 1)) + subdivisionSize.x, -subdivisionSize.y,
                     (subdivisionSize.z * (z - 1)) + subdivisionSize.z)
             }
 
@@ -402,7 +402,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     dir, travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
     
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
-    local instructions = CalculateMiningPaths(pos1, subdivisions)
+    local instructions = CalculateMiningPaths(pos1, subdivisions, dir)
     instructions = reverse(instructions)
 
     local cost = CalculateCosts(pos1, pos2, instructions)
