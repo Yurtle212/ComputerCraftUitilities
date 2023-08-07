@@ -7,7 +7,7 @@ function UpdateSetup(channel)
 end
 
 function Initialize()
-    Config = json.decodeFromFile("config")
+    Config = json.decodeFromFile("config.json")
 
     if (gps.locate()) then
         Position = vector.new(gps.locate())
