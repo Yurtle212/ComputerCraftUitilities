@@ -345,7 +345,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local instructions = CalculateMiningPaths(pos1, subdivisions)
     instructions = reverse(instructions)
 
-    local cost = CalculateCosts(pos1, pos2)
+    local cost = CalculateCosts(pos1, pos2, subdivisionsX * subdivisionsZ)
     print("Cost: " .. cost)
 
     Debug_PerformPath(instructions)
