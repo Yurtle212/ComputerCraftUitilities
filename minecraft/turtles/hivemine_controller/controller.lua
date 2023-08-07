@@ -82,9 +82,9 @@ end
 
 local headings = {
     north = 1,
-    west = 2,
+    east = 2,
     south = 3,
-    east = 4,
+    west = 4,
 }
 
 local directions = {
