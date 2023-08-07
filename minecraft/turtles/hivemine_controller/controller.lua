@@ -204,18 +204,58 @@ function CalculateMiningPaths(startPos, subdivisions)
         pos, dir, tmpInstructions = MoveTo(pos, dir, value.startPos)
         value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-        dir, tmpInstructions = RotateTo(dir, headings["north"])
+        -- mine
+
+        dir, tmpInstructions = RotateTo(dir, directions["+x"])
         value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-        local turnLeft = true
+        local positiveX = true
+        local positiveZ = true
 
-        -- local blockAmount = (value.endPos.x - value.startPos.x) * (value.endPos.y - value.startPos.y) * (value.endPos.z - value.startPos.z)
         local xDist = (value.endPos.x - value.startPos.x)
         local yDist = (value.endPos.y - value.startPos.y)
         local zDist = (value.endPos.z - value.startPos.z)
         local amount = xDist * yDist * zDist
 
         local startDir = dir
+
+        for y = 1, yDist, 1 do
+            for z = 1, zDist, 1 do
+                for x = 1, xDist, 1 do
+                    pos, tmpInstructions = move(pos, "forward", dir)
+                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                end
+
+                dir, tmpInstructions = RotateTo(dir, directions["+z"])
+                value.instructions = TableConcat(value.instructions, tmpInstructions)
+
+                pos, tmpInstructions = move(pos, "forward", dir)
+                value.instructions = TableConcat(value.instructions, tmpInstructions)
+
+                if ((positiveX and positiveZ) or (not positiveX and not positiveZ)) then
+                    dir, tmpInstructions = RotateTo(dir, directions["-x"])
+                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                else
+                    dir, tmpInstructions = RotateTo(dir, directions["+x"])
+                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                end
+
+                positiveX = not positiveX
+            end
+
+            for x = 1, xDist, 1 do
+                pos, tmpInstructions = move(pos, "forward", dir)
+                value.instructions = TableConcat(value.instructions, tmpInstructions)
+            end
+
+            pos, tmpInstructions = move(pos, "down", dir)
+            value.instructions = TableConcat(value.instructions, tmpInstructions)
+
+            dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
+            dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
+            
+            positiveZ = not positiveZ
+        end
 
         -- return to start location
 
