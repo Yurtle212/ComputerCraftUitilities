@@ -226,13 +226,18 @@ function CalculateMiningPaths(startPos, subdivisions)
                     value.instructions = TableConcat(value.instructions, tmpInstructions)
                 end
 
-                dir, tmpInstructions = RotateTo(dir, directions["+z"])
-                value.instructions = TableConcat(value.instructions, tmpInstructions)
+                if (positiveZ) then
+                    dir, tmpInstructions = RotateTo(dir, directions["+z"])
+                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                else
+                    dir, tmpInstructions = RotateTo(dir, directions["-z"])
+                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                end
 
                 pos, tmpInstructions = move(pos, "forward", dir)
                 value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-                if ((positiveX and positiveZ) or (not positiveX and not positiveZ)) then
+                if (positiveX) then
                     dir, tmpInstructions = RotateTo(dir, directions["-x"])
                     value.instructions = TableConcat(value.instructions, tmpInstructions)
                 else
@@ -255,6 +260,7 @@ function CalculateMiningPaths(startPos, subdivisions)
             dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
             
             positiveZ = not positiveZ
+            positiveX = not positiveX
         end
 
         -- return to start location
