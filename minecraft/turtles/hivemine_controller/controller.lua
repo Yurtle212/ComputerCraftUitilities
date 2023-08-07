@@ -57,11 +57,21 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
-            subdivisions[(x * (subdivisionsZ-1)) + z] = {
+            local index = (x * (subdivisionsZ-1)) + z
+            subdivisions[index] = {
                 startPos = vector.new(subdivisionSize.x * (x-1), 0, subdivisionSize.z * (z-1)),
                 endPos = vector.new((subdivisionSize.x * (x-1)) + subdivisionSize.x, subdivisionSize.y, (subdivisionSize.z * (z-1)) + subdivisionSize.z)
             }
-            print(subdivisions[(x * (subdivisionsZ-1)) + z])
+
+            if (x <= subdivisionsX) then
+                subdivisions[index].endPos.x = subdivisions[index].endPos.x - 1
+            end
+
+            if (z <= subdivisionsZ) then
+                subdivisions[index].endPos.z = subdivisions[index].endPos.z - 1
+            end
+
+            print(json.encode(subdivisions[index]))
         end
     end
 end
