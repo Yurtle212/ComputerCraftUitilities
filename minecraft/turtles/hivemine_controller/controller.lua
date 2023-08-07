@@ -476,6 +476,7 @@ function DeployMiner(instructions, rsBridge, modem, cost)
 
     turtle.select(slot)
     turtle.place()
+    peripheral.wrap("front").turnOn()
 
     local event, sender, message, protocol = os.pullEvent("modem_message")
 
