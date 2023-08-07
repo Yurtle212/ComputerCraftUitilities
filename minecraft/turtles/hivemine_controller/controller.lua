@@ -90,13 +90,13 @@ function CalculateMiningPaths(subdivisions)
                 instructionsIndex = instructionsIndex + 1
 
                 turnLeft = not turnLeft
+            end
 
-                for x = 1, xDist, 1 do
-                    value.instructions[instructionsIndex] = turtle.dig
-                    instructionsIndex = instructionsIndex + 1
-                    value.instructions[instructionsIndex] = turtle.forward
-                    instructionsIndex = instructionsIndex + 1
-                end
+            for x = 1, xDist, 1 do
+                value.instructions[instructionsIndex] = turtle.dig
+                instructionsIndex = instructionsIndex + 1
+                value.instructions[instructionsIndex] = turtle.forward
+                instructionsIndex = instructionsIndex + 1
             end
 
             value.instructions[instructionsIndex] = turtle.digDown
