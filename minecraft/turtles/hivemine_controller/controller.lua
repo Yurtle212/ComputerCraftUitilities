@@ -464,7 +464,7 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
     end
 end
 
-function DeployMiner(instructions, rsBridge, cost)
+function DeployMiner(instructions, rsBridge, modem, cost)
     local success = RetrieveItemFromStorage(rsBridge, {
         item = "computercraft:turtle_normal",
         amount = 1
@@ -542,12 +542,13 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local rsBridge = peripheral.find("rsBridge")
     
     local modem = peripheral.wrap("bottom")
+    modem.open(1)
 
     for key, value in pairs(instructions) do
         local builtInstruction = TableConcat(travelInstructions, value.instructions)
         builtInstruction = TableConcat(builtInstruction, travelInstructionsBack)
 
-        DeployMiner(builtInstruction, rsBridge, value.cost + travelCost)
+        DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost)
         break
     end
 end
