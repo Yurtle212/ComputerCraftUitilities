@@ -87,4 +87,5 @@ function DeloyMiners(pos1, pos2, subdivisions)
     local cost = CalculateCosts(pos1, pos2)
 end
 
-Initialize()
+-- Initialize()
+GetMiningSubdivisions(vector.new(0,0,0), vector.new(10,10,10), 2, 2)
