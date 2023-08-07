@@ -377,7 +377,9 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     -- dir, tmp = turnDirection(dir, "left")
     -- pos, tmp = move(pos, "forward", dir)
 
-    local travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
+    local travelInstructions
+
+    dir, travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
     
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local instructions = CalculateMiningPaths(pos1, subdivisions)
