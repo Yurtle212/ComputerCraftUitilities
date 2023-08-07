@@ -39,7 +39,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
-            local index = (x * (subdivisionsZ - 1)) + z
+            local index = ((x-1) * subdivisionsZ) + z
             subdivisions[index] = {
                 startPos = vector.new(subdivisionSize.x * (x - 1), 0, subdivisionSize.z * (z - 1)),
                 endPos = vector.new((subdivisionSize.x * (x - 1)) + subdivisionSize.x, subdivisionSize.y,
@@ -318,9 +318,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 end
 
 function Debug_PerformPath(instructions)
-    print(#instructions)
     for key, value in pairs(instructions) do
-        print(value)
         for i = 1, #value.instructions, 1 do
             value.instructions[i]()
         end
