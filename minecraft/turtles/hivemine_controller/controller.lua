@@ -39,7 +39,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
-            local index = ((x-1) * subdivisionsZ) + z
+            local index = ((x - 1) * subdivisionsZ) + z
 
             subdivisions[index] = {
                 startPos = vector.new(subdivisionSize.x * (x - 1), 0, subdivisionSize.z * (z - 1)),
@@ -122,10 +122,10 @@ local function move(pos, way, dir, dig)
 
     if way == "forward" then
         if (dig) then
-            retVal[#retVal+1] = turtle.dig
+            retVal[#retVal + 1] = turtle.dig
         end
-        
-        retVal[#retVal+1] = turtle.forward
+
+        retVal[#retVal + 1] = turtle.forward
         if dir == directions["-z"] then
             pos.z = pos.z - 1
         elseif dir == directions["-x"] then
@@ -137,26 +137,26 @@ local function move(pos, way, dir, dig)
         end
     elseif way == "up" then
         if (dig) then
-            retVal[#retVal+1] = turtle.digUp
+            retVal[#retVal + 1] = turtle.digUp
         end
-        
-        retVal[#retVal+1] = turtle.up
+
+        retVal[#retVal + 1] = turtle.up
         pos.y = pos.y + 1
     else
         if (dig) then
-            retVal[#retVal+1] = turtle.digDown
+            retVal[#retVal + 1] = turtle.digDown
         end
-        
-        retVal[#retVal+1] = turtle.down
+
+        retVal[#retVal + 1] = turtle.down
         pos.y = pos.y - 1
     end
 
     return pos, retVal
 end
 
-function TableConcat(t1,t2)
-    for i=1,#t2 do
-        t1[#t1+1] = t2[i]
+function TableConcat(t1, t2)
+    for i = 1, #t2 do
+        t1[#t1 + 1] = t2[i]
     end
     return t1
 end
@@ -243,8 +243,8 @@ local fuelConsumingFunctions = {
 
 local function reverse(tab)
     local rev = {}
-    for i=#tab, 1, -1 do
-        rev[#rev+1] = tab[i]
+    for i = #tab, 1, -1 do
+        rev[#rev + 1] = tab[i]
     end
     return rev
 end
@@ -254,7 +254,7 @@ function CalculateTravelPath(spawnPos, destPos, dir, travelHeight, dig)
     local instructions = {}
     local tmpInstructions = {}
     local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
-    
+
     if pos.y < travelHeight then
         pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z), dig)
         instructions = TableConcat(instructions, tmpInstructions)
@@ -284,7 +284,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         local tmpInstructions
 
         local dir = sDir
-        local pos = vector.new(startPos.x,startPos.y,startPos.z)
+        local pos = vector.new(startPos.x, startPos.y, startPos.z)
 
         local distFromStart = value.startPos:sub(startPos)
 
@@ -431,9 +431,10 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     dir, tmp, travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
     travelCost = travelCost + tmp
-    dir, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir, Config["travelHeight"], false)
+    dir, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir,
+        Config["travelHeight"], false)
     travelCost = travelCost + tmp
-    
+
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local instructions = CalculateMiningPaths(pos1, subdivisions, dir)
     instructions = reverse(instructions)
@@ -442,12 +443,10 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     print("Cost: " .. cost)
 
     if Config["debug_executePath"] then
-        
+        Debug_PerformPath(travelInstructions, true)
+        Debug_PerformPath(instructions, false)
+        Debug_PerformPath(travelInstructionsBack, true)
     end
-
-    Debug_PerformPath(travelInstructions, true)
-    Debug_PerformPath(instructions, false)
-    Debug_PerformPath(travelInstructionsBack, true)
 end
 
 -- Initialize()
