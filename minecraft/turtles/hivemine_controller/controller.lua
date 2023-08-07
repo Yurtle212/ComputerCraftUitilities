@@ -171,15 +171,15 @@ function RotateTo(dir, dest)
     while dir ~= dest do
         if (dir > dest) then
             if math.abs(dir - dest) > 2 then
-                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
-            else
                 dir, instructions[#instructions + 1] = turnDirection(dir, "right")
+            else
+                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
             end
         else
             if math.abs(dir - dest) > 2 then
-                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
-            else
                 dir, instructions[#instructions + 1] = turnDirection(dir, "left")
+            else
+                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
             end
         end
     end
