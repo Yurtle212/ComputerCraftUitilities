@@ -35,6 +35,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local subdivisionSize = vector.new(math.floor((wholeSize.x / subdivisionsX) + 0.5), wholeSize.y,
         math.floor((wholeSize.z / subdivisionsZ) + 0.5))
     -- print("Subdivision Edges: (x:" .. subdivisionSize.x .. ", y:" .. subdivisionSize.y  .. ", z:" .. subdivisionSize.z .. ")")
+
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
@@ -61,15 +62,18 @@ end
 
 local headings = {
     north = 1,
-    south = 2,
-    east = 3,
-    west = 4,
+    west = 2,
+    south = 3,
+    east = 4,
 }
 
-local function logDirection(dir, turn)
+local function turnDirection(dir, turn)
+    local retVal
     if (turn == "left") then
+        retVal = turtle.turnLeft
         dir = dir - 1
     else
+        retVal = turtle.turnRight
         dir = dir + 1
     end
 
@@ -79,7 +83,27 @@ local function logDirection(dir, turn)
         dir = 1
     end
 
-    return dir
+    return dir, retVal
+end
+
+local function move(pos, way, dir)
+    if way == "forward" then
+        if dir == 1 then
+            pos.z = pos.z - 1
+        elseif dir == 2 then
+            pos.x = pos.x - 1
+        elseif dir == 3 then
+            pos.z = pos.z + 1
+        elseif dir == 3 then
+            pos.x = pos.x + 1
+        end
+    elseif way == "up" then
+        pos.y = pos.y + 1
+    else
+        pos.y = pos.y - 1
+    end
+
+    return pos
 end
 
 function CalculateMiningPaths(startPos, subdivisions)
@@ -88,25 +112,47 @@ function CalculateMiningPaths(startPos, subdivisions)
         local instructionsIndex = 1
 
         local dir = 1
-        local baseStartDir = dir
+        local pos = vector.new(0,0,0)
 
         local distFromStart = value.startPos:sub(startPos)
 
-        for x = 1, distFromStart.x, 1 do
-            value.instructions[instructionsIndex] = turtle.dig
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.forward
+        while dir ~= 1 do
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
         end
 
-        value.instructions[instructionsIndex] = turtle.turnLeft
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "left")
+        local baseStartDir = dir
+        local baseStartPos = pos
 
-        for z = 1, distFromStart.z, 1 do
-            value.instructions[instructionsIndex] = turtle.dig
+        -- go to assigned area
+
+        if distFromStart.z < 0 then
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.forward
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
+            instructionsIndex = instructionsIndex + 1
+        end
+
+        for z = 1, math.abs(distFromStart.z), 1 do
+            value.instructions[instructionsIndex] = move(pos, "forward", dir)
+            instructionsIndex = instructionsIndex + 1
+        end
+
+        if distFromStart.x < 0 then
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
+            instructionsIndex = instructionsIndex + 1
+        else
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "right")
+            instructionsIndex = instructionsIndex + 1
+        end
+
+        for x = 1, math.abs(distFromStart.x), 1 do
+            value.instructions[instructionsIndex] = move(pos, "forward", dir)
+            instructionsIndex = instructionsIndex + 1
+        end
+
+        while dir ~= 1 do
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
         end
 
@@ -119,127 +165,43 @@ function CalculateMiningPaths(startPos, subdivisions)
         local amount = xDist * yDist * zDist
 
         local startDir = dir
-        for y = 1, yDist, 1 do
-            for z = 1, zDist, 1 do
-                for x = 1, xDist, 1 do
-                    value.instructions[instructionsIndex] = turtle.dig
-                    instructionsIndex = instructionsIndex + 1
-                    value.instructions[instructionsIndex] = turtle.forward
-                    instructionsIndex = instructionsIndex + 1
-                end
 
-                if (turnLeft) then
-                    value.instructions[instructionsIndex] = turtle.turnLeft
-                    instructionsIndex = instructionsIndex + 1
-                    logDirection(dir, "left")
-                    value.instructions[instructionsIndex] = turtle.dig
-                    instructionsIndex = instructionsIndex + 1
-                    value.instructions[instructionsIndex] = turtle.forward
-                    instructionsIndex = instructionsIndex + 1
-                    value.instructions[instructionsIndex] = turtle.turnLeft
-                    instructionsIndex = instructionsIndex + 1
-                    logDirection(dir, "left")
-                else
-                    value.instructions[instructionsIndex] = turtle.turnRight
-                    instructionsIndex = instructionsIndex + 1
-                    logDirection(dir, "right")
-                    value.instructions[instructionsIndex] = turtle.dig
-                    instructionsIndex = instructionsIndex + 1
-                    value.instructions[instructionsIndex] = turtle.forward
-                    instructionsIndex = instructionsIndex + 1
-                    value.instructions[instructionsIndex] = turtle.turnRight
-                    instructionsIndex = instructionsIndex + 1
-                    logDirection(dir, "right")
-                end
+        -- return to start location
 
-                turnLeft = not turnLeft
-            end
+        local dirToBaseStart = pos:sub(baseStartDir)
 
-            for x = 1, xDist, 1 do
-                value.instructions[instructionsIndex] = turtle.dig
-                instructionsIndex = instructionsIndex + 1
-                value.instructions[instructionsIndex] = turtle.forward
-                instructionsIndex = instructionsIndex + 1
-            end
-
-            value.instructions[instructionsIndex] = turtle.digDown
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.down
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.turnLeft
-            instructionsIndex = instructionsIndex + 1
-            logDirection(dir, "left")
-            value.instructions[instructionsIndex] = turtle.turnLeft
-            instructionsIndex = instructionsIndex + 1
-            logDirection(dir, "left")
-        end
-
-        for y = 1, yDist, 1 do
-            value.instructions[instructionsIndex] = turtle.digUp
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.up
+        while dir ~= 1 do
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
         end
 
-        while startDir ~= dir do
-            value.instructions[instructionsIndex] = turtle.turnLeft
+        if dirToBaseStart.z < 0 then
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
-            logDirection(dir, "left")
-        end
-
-        value.instructions[instructionsIndex] = turtle.turnLeft
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "left")
-        value.instructions[instructionsIndex] = turtle.turnLeft
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "left")
-
-        for z = 1, zDist, 1 do
-            value.instructions[instructionsIndex] = turtle.dig
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.forward
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
         end
 
-        value.instructions[instructionsIndex] = turtle.turnRight
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "right")
-
-        for x = 1, xDist, 1 do
-            value.instructions[instructionsIndex] = turtle.dig
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.forward
+        for z = 1, math.abs(dirToBaseStart.z), 1 do
+            value.instructions[instructionsIndex] = move(pos, "forward", dir)
             instructionsIndex = instructionsIndex + 1
         end
 
-        while baseStartDir ~= dir do
-            value.instructions[instructionsIndex] = turtle.turnLeft
+        if dirToBaseStart.x < 0 then
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
-            logDirection(dir, "left")
-        end
-
-        value.instructions[instructionsIndex] = turtle.turnLeft
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "left")
-        value.instructions[instructionsIndex] = turtle.turnLeft
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "left")
-
-        for z = 1, distFromStart.z, 1 do
-            value.instructions[instructionsIndex] = turtle.dig
-            instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.forward
+        else
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "right")
             instructionsIndex = instructionsIndex + 1
         end
 
-        value.instructions[instructionsIndex] = turtle.turnLeft
-        instructionsIndex = instructionsIndex + 1
-        logDirection(dir, "right")
-
-        for x = 1, distFromStart.x, 1 do
-            value.instructions[instructionsIndex] = turtle.dig
+        for x = 1, math.abs(dirToBaseStart.x), 1 do
+            value.instructions[instructionsIndex] = move(pos, "forward", dir)
             instructionsIndex = instructionsIndex + 1
-            value.instructions[instructionsIndex] = turtle.forward
+        end
+
+        while dir ~= 1 do
+            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
             instructionsIndex = instructionsIndex + 1
         end
 
