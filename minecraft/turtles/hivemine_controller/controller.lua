@@ -63,11 +63,11 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
                 endPos = vector.new((subdivisionSize.x * (x-1)) + subdivisionSize.x, subdivisionSize.y, (subdivisionSize.z * (z-1)) + subdivisionSize.z)
             }
 
-            if (x <= subdivisionsX) then
+            if (x < subdivisionsX) then
                 subdivisions[index].endPos.x = subdivisions[index].endPos.x - 1
             end
 
-            if (z <= subdivisionsZ) then
+            if (z < subdivisionsZ) then
                 subdivisions[index].endPos.z = subdivisions[index].endPos.z - 1
             end
 
