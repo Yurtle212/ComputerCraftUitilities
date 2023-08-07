@@ -175,6 +175,8 @@ function CalculateMiningPaths(startPos, subdivisions)
         end
 
         for y = 1, yDist, 1 do
+            value.instructions[instructionsIndex] = turtle.digUp
+            instructionsIndex = instructionsIndex + 1
             value.instructions[instructionsIndex] = turtle.up
             instructionsIndex = instructionsIndex + 1
         end
@@ -193,6 +195,8 @@ function CalculateMiningPaths(startPos, subdivisions)
         logDirection(dir, "left")
 
         for z = 1, zDist, 1 do
+            value.instructions[instructionsIndex] = turtle.dig
+            instructionsIndex = instructionsIndex + 1
             value.instructions[instructionsIndex] = turtle.forward
             instructionsIndex = instructionsIndex + 1
         end
@@ -202,6 +206,8 @@ function CalculateMiningPaths(startPos, subdivisions)
         logDirection(dir, "right")
 
         for x = 1, xDist, 1 do
+            value.instructions[instructionsIndex] = turtle.dig
+            instructionsIndex = instructionsIndex + 1
             value.instructions[instructionsIndex] = turtle.forward
             instructionsIndex = instructionsIndex + 1
         end
