@@ -460,6 +460,11 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
 end
 
 function DeployMiner(instructions, rsBridge, cost)
+    local success = RetrieveItemFromStorage(rsBridge, {
+        item = "computercraft:turtle_normal",
+        amount = 1
+    }, "west")
+
     local slot = yurtle.findItemInInventory("computercraft:turtle_normal")
     if (slot == nil) then
         return
@@ -472,7 +477,7 @@ function DeployMiner(instructions, rsBridge, cost)
 
     local neededFuel = cost - message
 
-    local success = RetrieveItemFromStorage(rsBridge, {
+    success = RetrieveItemFromStorage(rsBridge, {
         item = "fuel",
         amount = neededFuel
     }, "west")
