@@ -442,7 +442,7 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
         end
 
         for i = #itemsForExport, 1, -1 do
-            if rsBridge.getItem(itemsForExport[i].name).amount > itemsForExport[i].count then
+            if rsBridge.getItem({name = itemsForExport[i].name}).amount > itemsForExport[i].count then
                 itemsForExport[i].count = itemsForExport[i].count + 1
                 fuelGotten = fuelGotten + yurtle.fuelItems[itemsForExport[i].name]
 
