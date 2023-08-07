@@ -109,7 +109,7 @@ local function move(pos, way, dir, dig)
             pos.x = pos.x - 1
         elseif dir == 3 then
             pos.z = pos.z + 1
-        elseif dir == 3 then
+        elseif dir == 4 then
             pos.x = pos.x + 1
         end
     elseif way == "up" then
