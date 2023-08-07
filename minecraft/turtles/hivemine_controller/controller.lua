@@ -355,4 +355,5 @@ end
 -- local testSubs = GetMiningSubdivisions(vector.new(0, 0, 0), vector.new(3, 3, 3), 2, 2)
 -- CalculateMiningPaths(vector.new(0, 0, 0), testSubs)
 
+Initialize()
 DeployMiners(vector.new(0, 0, 0), vector.new(3, 3, 3), 2, 2)
