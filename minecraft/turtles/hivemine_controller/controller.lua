@@ -110,11 +110,11 @@ local function move(pos, way, dir)
         end
     elseif way == "up" then
         retVal[#retVal+1] = turtle.digUp
-        retVal = turtle.up
+        retVal[#retVal+1] = turtle.up
         pos.y = pos.y + 1
     else
         retVal[#retVal+1] = turtle.digDown
-        retVal = turtle.down
+        retVal[#retVal+1] = turtle.down
         pos.y = pos.y - 1
     end
 
