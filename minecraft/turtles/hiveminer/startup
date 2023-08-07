@@ -1,22 +1,7 @@
-if (turtle.getFuelLevel() <= 0) then
-    turtle.suck(1)
-    turtle.refuel()
+if (fs.exists("startup")) then
+    print("Controller Turtle")
+    exit(1)
+else
+    print("Miner Turtle")
 end
 
-turtle.turnLeft()
-turtle.forward()
-
-if (~turtle.inspectDown()) then -- return to controller
-    print("no setup")
-    turtle.digUp()
-    turtle.up()
-    turtle.turnLeft()
-    turtle.turnLeft()
-    turtle.dig()
-    turtle.forward()
-    turtle.turnRight()
-    turtle.dig()
-    turtle.forward()
-end
-
-shell.run("disk/setup")

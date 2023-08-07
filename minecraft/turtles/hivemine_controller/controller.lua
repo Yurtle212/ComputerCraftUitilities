@@ -412,7 +412,14 @@ function CalculateCosts(travelCost, bots)
     return travelCost + miningCosts
 end
 
+function DeployMiner(instructions)
+    
+end
+
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
+    shell.run("delete disk/startup")
+    shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hivemine_controller/startup disk/startup")
+
     local tmp
 
     local dir = headings[Config["heading"]]
