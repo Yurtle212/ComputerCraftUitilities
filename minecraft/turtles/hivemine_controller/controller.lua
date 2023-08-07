@@ -151,7 +151,7 @@ function MoveTo(pos, dir, dest)
     local tmp
 
     while not pos:equals(dest) do
-        if not (pos.y == dest.y) then
+        if (pos.y ~= dest.y) then
             if pos.y > dest.y then
                 pos, tmp = move(pos, "up", dir)
                 instructions = TableConcat(instructions, tmp)
@@ -159,7 +159,7 @@ function MoveTo(pos, dir, dest)
                 pos, tmp = move(pos, "down", dir)
                 instructions = TableConcat(instructions, tmp)
             end
-        elseif not (pos.z == dest.z) then
+        elseif (pos.z ~= dest.z) then
             if (pos.z > pos.z) then
                 dir, tmp = RotateTo(dir, directions["-z"])
                 instructions = TableConcat(instructions, tmp)
@@ -171,7 +171,7 @@ function MoveTo(pos, dir, dest)
                 pos, tmp = move(pos, "forward", dir)
                 instructions = TableConcat(instructions, tmp)
             end
-        elseif not (pos.x == dest.x) then
+        elseif (pos.x ~= dest.x) then
             if (pos.x > pos.x) then
                 dir, tmp = RotateTo(dir, directions["-x"])
                 instructions = TableConcat(instructions, tmp)
