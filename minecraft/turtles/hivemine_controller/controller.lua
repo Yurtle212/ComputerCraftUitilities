@@ -318,7 +318,9 @@ function CalculateMiningPaths(startPos, subdivisions)
 end
 
 function Debug_PerformPath(instructions)
+    print(#instructions)
     for key, value in pairs(instructions) do
+        print(value)
         for i = 1, #value.instructions, 1 do
             value.instructions[i]()
         end
