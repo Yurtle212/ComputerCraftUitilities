@@ -197,6 +197,20 @@ function MoveTo(pos, dir, dest)
     return pos, dir, instructions
 end
 
+local fuelConsumingFunctions = {
+    turtle.forward,
+    turtle.up,
+    turtle.down,
+    turtle.back
+}
+
+local function reverse(tab)
+    for i = 1, #tab//2, 1 do
+        tab[i], tab[#tab-i+1] = tab[#tab-i+1], tab[i]
+    end
+    return tab
+end
+
 function CalculateMiningPaths(startPos, subdivisions)
     for key, value in pairs(subdivisions) do
         value.instructions = {}
@@ -285,32 +299,59 @@ function CalculateMiningPaths(startPos, subdivisions)
         dir, tmpInstructions = RotateTo(dir, headings["north"])
         value.instructions = TableConcat(value.instructions, tmpInstructions)
 
+        value.cost = 0
+
         for i = 1, #value.instructions, 1 do
             -- print(value.instructions[i])
             -- os.startTimer(0.5)
             -- os.pullEvent("timer")
+            -- value.instructions[i]()
+            for j = 1, fuelConsumingFunctions, 1 do
+                if value.instructions[i] == fuelConsumingFunctions[j] then
+                    value.cost = value.cost + 1
+                end
+            end
+        end
+    end
+    return subdivisions
+end
+
+function Debug_PerformPath(instructions)
+    for key, value in pairs(instructions) do
+        for i = 1, #value.instructions, 1 do
             value.instructions[i]()
         end
     end
 end
 
-function CalculateCosts(pos1, pos2, subdivisions)
+function CalculateCosts(pos1, pos2, bots)
     local travelDest = pos1
-    -- if (pos1.sub(SpawnLoc).length() > pos2.sub(SpawnLoc).length()) then
-    --     travelDest = pos2
-    -- end
 
     local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
     travelCost = travelCost + (travelDest:sub(SpawnLoc).length() * 2) -- to and from destination
-    travelCost = travelCost * subdivisions                            -- times the number of bots
+    travelCost = travelCost * bots                                    -- times the number of bots
 
     local miningCosts = 0
+    for key, value in pairs(instructions) do
+        miningCosts = miningCosts + value.cost
+    end
+
+    return travelCost + miningCosts
 end
 
-function DeployMiners(pos1, pos2, subdivisions)
+function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
+    local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
+    local instructions = CalculateMiningPaths(pos1, subdivisions)
+    instructions = reverse(instructions)
+
     local cost = CalculateCosts(pos1, pos2)
+    print("Cost: " .. cost)
+
+    Debug_PerformPath(instructions)
 end
 
 -- Initialize()
-local testSubs = GetMiningSubdivisions(vector.new(0, 0, 0), vector.new(10, 10, 10), 2, 2)
-CalculateMiningPaths(vector.new(0, 0, 0), testSubs)
+-- local testSubs = GetMiningSubdivisions(vector.new(0, 0, 0), vector.new(3, 3, 3), 2, 2)
+-- CalculateMiningPaths(vector.new(0, 0, 0), testSubs)
+
+DeployMiners(vector.new(0, 0, 0), vector.new(3, 3, 3), 2, 2)
