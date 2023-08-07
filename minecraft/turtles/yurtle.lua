@@ -7,20 +7,22 @@ local fuelItems = {
 local NUM_SLOTS = 16
 
 local function refuel()
-    
+
 end
 
 local function findItemInInventory(itemName)
     for i = 1, NUM_SLOTS, 1 do
         local item = turtle.getItemDetail(i)
-        if (itemName == "fuel") then
-            for key, value in pairs(fuelItems) do
-                if key == itemName then
-                    return i
+        if (item ~= nil) then
+            if (itemName == "fuel") then
+                for key, value in pairs(fuelItems) do
+                    if key == itemName then
+                        return i
+                    end
                 end
+            elseif (item.name) == itemName then
+                return i
             end
-        elseif (item.name) == itemName then
-            return i
         end
     end
     return nil
