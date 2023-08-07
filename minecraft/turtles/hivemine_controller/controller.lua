@@ -101,7 +101,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         value.instructions[instructionsIndex] = turtle.turnLeft
         instructionsIndex = instructionsIndex + 1
-        logDirection("left")
+        logDirection(dir, "left")
 
         for z = 1, distFromStart.z, 1 do
             value.instructions[instructionsIndex] = turtle.dig
@@ -131,25 +131,25 @@ function CalculateMiningPaths(startPos, subdivisions)
                 if (turnLeft) then
                     value.instructions[instructionsIndex] = turtle.turnLeft
                     instructionsIndex = instructionsIndex + 1
-                    logDirection("left")
+                    logDirection(dir, "left")
                     value.instructions[instructionsIndex] = turtle.dig
                     instructionsIndex = instructionsIndex + 1
                     value.instructions[instructionsIndex] = turtle.forward
                     instructionsIndex = instructionsIndex + 1
                     value.instructions[instructionsIndex] = turtle.turnLeft
                     instructionsIndex = instructionsIndex + 1
-                    logDirection("left")
+                    logDirection(dir, "left")
                 else
                     value.instructions[instructionsIndex] = turtle.turnRight
                     instructionsIndex = instructionsIndex + 1
-                    logDirection("right")
+                    logDirection(dir, "right")
                     value.instructions[instructionsIndex] = turtle.dig
                     instructionsIndex = instructionsIndex + 1
                     value.instructions[instructionsIndex] = turtle.forward
                     instructionsIndex = instructionsIndex + 1
                     value.instructions[instructionsIndex] = turtle.turnRight
                     instructionsIndex = instructionsIndex + 1
-                    logDirection("right")
+                    logDirection(dir, "right")
                 end
 
                 turnLeft = not turnLeft
@@ -168,10 +168,10 @@ function CalculateMiningPaths(startPos, subdivisions)
             instructionsIndex = instructionsIndex + 1
             value.instructions[instructionsIndex] = turtle.turnLeft
             instructionsIndex = instructionsIndex + 1
-            logDirection("left")
+            logDirection(dir, "left")
             value.instructions[instructionsIndex] = turtle.turnLeft
             instructionsIndex = instructionsIndex + 1
-            logDirection("left")
+            logDirection(dir, "left")
         end
 
         for y = 1, yDist, 1 do
@@ -182,15 +182,15 @@ function CalculateMiningPaths(startPos, subdivisions)
         while startDir ~= dir do
             value.instructions[instructionsIndex] = turtle.turnLeft
             instructionsIndex = instructionsIndex + 1
-            logDirection("left")
+            logDirection(dir, "left")
         end
 
         value.instructions[instructionsIndex] = turtle.turnLeft
         instructionsIndex = instructionsIndex + 1
-        logDirection("left")
+        logDirection(dir, "left")
         value.instructions[instructionsIndex] = turtle.turnLeft
         instructionsIndex = instructionsIndex + 1
-        logDirection("left")
+        logDirection(dir, "left")
 
         for z = 1, zDist, 1 do
             value.instructions[instructionsIndex] = turtle.forward
@@ -199,7 +199,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         value.instructions[instructionsIndex] = turtle.turnRight
         instructionsIndex = instructionsIndex + 1
-        logDirection("right")
+        logDirection(dir, "right")
 
         for x = 1, xDist, 1 do
             value.instructions[instructionsIndex] = turtle.forward
@@ -209,15 +209,15 @@ function CalculateMiningPaths(startPos, subdivisions)
         while baseStartDir ~= dir do
             value.instructions[instructionsIndex] = turtle.turnLeft
             instructionsIndex = instructionsIndex + 1
-            logDirection("left")
+            logDirection(dir, "left")
         end
 
         value.instructions[instructionsIndex] = turtle.turnLeft
         instructionsIndex = instructionsIndex + 1
-        logDirection("left")
+        logDirection(dir, "left")
         value.instructions[instructionsIndex] = turtle.turnLeft
         instructionsIndex = instructionsIndex + 1
-        logDirection("left")
+        logDirection(dir, "left")
 
         for z = 1, distFromStart.z, 1 do
             value.instructions[instructionsIndex] = turtle.dig
@@ -228,7 +228,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         value.instructions[instructionsIndex] = turtle.turnLeft
         instructionsIndex = instructionsIndex + 1
-        logDirection("right")
+        logDirection(dir, "right")
 
         for x = 1, distFromStart.x, 1 do
             value.instructions[instructionsIndex] = turtle.dig
