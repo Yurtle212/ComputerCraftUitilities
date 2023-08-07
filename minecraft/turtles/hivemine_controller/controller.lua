@@ -3,7 +3,7 @@ os.loadAPI("json")
 function UpdateSetup(channel)
     shell.run("delete disk/setup")
     shell.run(
-    "wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hivemine/setup.lua disk/setup.lua")
+        "wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hivemine/setup.lua disk/setup.lua")
 end
 
 function Initialize()
@@ -30,37 +30,19 @@ function Initialize()
 end
 
 function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
-    -- local powerTable = { 1, 16, 64 }
-    -- local closest = powerTable[1]
-
-    -- for i, currentNum in pairs(powerTable) do
-    --     if (currentNum > subdivisions) then
-    --         break
-    --     end
-
-    --     local diff = math.abs(currentNum - subdivisions)
-
-    --     if diff < closest then
-    --         closest = currentNum
-    --     end
-    -- end
-
-    -- local wholeSize = pos1.sub(pos2)
-    -- wholeSize = vector.new(math.abs(wholeSize.x), math.abs(wholeSize.y), math.abs(wholeSize.z))
-    -- local subdivisionSize = vector.new(math.floor((wholeSize.x / closest) + 0.5), wholeSize.y, math.floor((wholeSize.z / closest) + 0.5))
-    -- print("Subdivision Edges: " .. subdivisionSize)
-
     local wholeSize = pos1:sub(pos2)
     wholeSize = vector.new(math.abs(wholeSize.x), math.abs(wholeSize.y), math.abs(wholeSize.z))
-    local subdivisionSize = vector.new(math.floor((wholeSize.x / subdivisionsX) + 0.5), wholeSize.y, math.floor((wholeSize.z / subdivisionsZ) + 0.5))
+    local subdivisionSize = vector.new(math.floor((wholeSize.x / subdivisionsX) + 0.5), wholeSize.y,
+        math.floor((wholeSize.z / subdivisionsZ) + 0.5))
     -- print("Subdivision Edges: (x:" .. subdivisionSize.x .. ", y:" .. subdivisionSize.y  .. ", z:" .. subdivisionSize.z .. ")")
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
-            local index = (x * (subdivisionsZ-1)) + z
+            local index = (x * (subdivisionsZ - 1)) + z
             subdivisions[index] = {
-                startPos = vector.new(subdivisionSize.x * (x-1), 0, subdivisionSize.z * (z-1)),
-                endPos = vector.new((subdivisionSize.x * (x-1)) + subdivisionSize.x, subdivisionSize.y, (subdivisionSize.z * (z-1)) + subdivisionSize.z)
+                startPos = vector.new(subdivisionSize.x * (x - 1), 0, subdivisionSize.z * (z - 1)),
+                endPos = vector.new((subdivisionSize.x * (x - 1)) + subdivisionSize.x, subdivisionSize.y,
+                    (subdivisionSize.z * (z - 1)) + subdivisionSize.z)
             }
 
             if (x < subdivisionsX) then
@@ -74,10 +56,58 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
             print(json.encode(subdivisions[index]))
         end
     end
+    return subdivisions
 end
 
-function CalculateMiningCost(spawn, startPos, endPos)
+function CalculateMiningPaths(subdivisions)
+    for key, value in pairs(subdivisions) do
+        value.instructions = {}
+        local instructionsIndex = 1
+        local turnLeft = true
 
+        -- local blockAmount = (value.endPos.x - value.startPos.x) * (value.endPos.y - value.startPos.y) * (value.endPos.z - value.startPos.z)
+        local xDist = (value.endPos.x - value.startPos.x)
+        local yDist = (value.endPos.y - value.startPos.y)
+        local zDist = (value.endPos.z - value.startPos.z)
+        local amount = xDist * yDist * zDist
+
+        for y = 1, yDist, 1 do
+            for z = 1, zDist, 1 do
+                for x = 1, xDist, 1 do
+                    value.instructions[instructionsIndex] = turtle.dig
+                    instructionsIndex = instructionsIndex + 1
+                    value.instructions[instructionsIndex] = turtle.forward
+                    instructionsIndex = instructionsIndex + 1
+                end
+
+                value.instructions[instructionsIndex] = turnLeft and turtle.turnLeft or turtle.turnRight -- lua ternary weird idk
+                instructionsIndex = instructionsIndex + 1
+                value.instructions[instructionsIndex] = turtle.dig
+                instructionsIndex = instructionsIndex + 1
+                value.instructions[instructionsIndex] = turtle.forward
+                instructionsIndex = instructionsIndex + 1
+                value.instructions[instructionsIndex] = turnLeft and turtle.turnLeft or turtle.turnRight -- lua ternary weird idk
+                instructionsIndex = instructionsIndex + 1
+
+                turnLeft = not turnLeft
+            end
+
+            value.instructions[instructionsIndex] = turtle.digDown
+            instructionsIndex = instructionsIndex + 1
+            value.instructions[instructionsIndex] = turtle.down
+            instructionsIndex = instructionsIndex + 1
+            value.instructions[instructionsIndex] = turtle.turnLeft
+            instructionsIndex = instructionsIndex + 1
+            value.instructions[instructionsIndex] = turtle.turnLeft
+            instructionsIndex = instructionsIndex + 1
+        end
+
+        for i = 1, amount, 1 do
+            print(value.instructions[i])
+            os.startTimer(0.5)
+            os.pullEvent("timer")
+        end
+    end
 end
 
 function CalculateCosts(pos1, pos2, subdivisions)
@@ -93,9 +123,10 @@ function CalculateCosts(pos1, pos2, subdivisions)
     local miningCosts = 0
 end
 
-function DeloyMiners(pos1, pos2, subdivisions)
+function DeployMiners(pos1, pos2, subdivisions)
     local cost = CalculateCosts(pos1, pos2)
 end
 
 -- Initialize()
-GetMiningSubdivisions(vector.new(0,0,0), vector.new(10,10,10), 2, 2)
+local testSubs = GetMiningSubdivisions(vector.new(0, 0, 0), vector.new(10, 10, 10), 2, 2)
+CalculateMiningPaths(testSubs)
