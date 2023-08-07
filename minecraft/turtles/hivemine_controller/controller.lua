@@ -103,9 +103,10 @@ function CalculateMiningPaths(subdivisions)
         end
 
         for i = 1, amount, 1 do
-            print(value.instructions[i])
-            os.startTimer(0.5)
-            os.pullEvent("timer")
+            -- print(value.instructions[i])
+            -- os.startTimer(0.5)
+            -- os.pullEvent("timer")
+            value.instructions[i]()
         end
     end
 end
