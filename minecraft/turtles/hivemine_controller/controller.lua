@@ -40,6 +40,23 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
             local index = ((x-1) * subdivisionsZ) + z
+
+            subdivisions[index] = {
+                startPos = vector.new(subdivisionSize.x * (x - 1), 0, subdivisionSize.z * (z - 1)),
+                endPos = vector.new((subdivisionSize.x * (x - 1)) + subdivisionSize.x, subdivisionSize.y,
+                    (subdivisionSize.z * (z - 1)) + subdivisionSize.z)
+            }
+
+            if pos1.x > pos2.x then
+                subdivisions[index].startPos.x = pos1.x - subdivisions[index].startPos.x
+                subdivisions[index].endPos.x = pos1.x - subdivisions[index].endPos.x
+            end
+
+            if pos1.z > pos2.z then
+                subdivisions[index].startPos.z = pos1.z - subdivisions[index].startPos.z
+                subdivisions[index].endPos.z = pos1.z - subdivisions[index].endPos.z
+            end
+
             subdivisions[index] = {
                 startPos = vector.new(subdivisionSize.x * (x - 1), 0, subdivisionSize.z * (z - 1)),
                 endPos = vector.new((subdivisionSize.x * (x - 1)) + subdivisionSize.x, subdivisionSize.y,
@@ -53,6 +70,8 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
             if (z < subdivisionsZ) then
                 subdivisions[index].endPos.z = subdivisions[index].endPos.z - 1
             end
+
+            subdivisions[index] = subdivisions[index]:add(pos1)
 
             print(json.encode(subdivisions[index]))
         end
@@ -231,14 +250,14 @@ function CalculateTravelPath(spawnPos, destPos, dir, travelHeight)
     return dir, instructions
 end
 
-function CalculateMiningPaths(startPos, subdivisions)
+function CalculateMiningPaths(startPos, subdivisions, sDir)
     for key, value in pairs(subdivisions) do
         value.instructions = {}
 
         local tmpInstructions
 
-        local dir = 1
-        local pos = vector.new(0,0,0)
+        local dir = sDir
+        local pos = vector.new(startPos.x,startPos.y,startPos.z)
 
         local distFromStart = value.startPos:sub(startPos)
 
