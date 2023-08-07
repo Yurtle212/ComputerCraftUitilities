@@ -50,10 +50,10 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     -- local subdivisionSize = vector.new(math.floor((wholeSize.x / closest) + 0.5), wholeSize.y, math.floor((wholeSize.z / closest) + 0.5))
     -- print("Subdivision Edges: " .. subdivisionSize)
 
-    local wholeSize = pos1.sub(pos2)
+    local wholeSize = pos1:sub(pos2)
     wholeSize = vector.new(math.abs(wholeSize.x), math.abs(wholeSize.y), math.abs(wholeSize.z))
     local subdivisionSize = vector.new(math.floor((wholeSize.x / subdivisionsX) + 0.5), wholeSize.y, math.floor((wholeSize.z / subdivisionsZ) + 0.5))
-    print("Subdivision Edges: " .. subdivisionSize)
+    -- print("Subdivision Edges: (x:" .. subdivisionSize.x .. ", y:" .. subdivisionSize.y  .. ", z:" .. subdivisionSize.z .. ")")
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
         for z = 1, subdivisionsZ, 1 do
@@ -77,7 +77,7 @@ function CalculateCosts(pos1, pos2, subdivisions)
     -- end
 
     local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
-    travelCost = travelCost + (travelDest.sub(SpawnLoc).length() * 2) -- to and from destination
+    travelCost = travelCost + (travelDest:sub(SpawnLoc).length() * 2) -- to and from destination
     travelCost = travelCost * subdivisions                            -- times the number of bots
 
     local miningCosts = 0
