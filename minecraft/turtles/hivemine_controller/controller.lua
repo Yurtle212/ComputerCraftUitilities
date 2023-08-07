@@ -168,7 +168,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         -- return to start location
 
-        local dirToBaseStart = pos:sub(baseStartDir)
+        local dirToBaseStart = pos:sub(baseStartPos)
 
         while dir ~= 1 do
             dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
