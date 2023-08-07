@@ -424,27 +424,26 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
         for key, value in pairs(yurtle.fuelItems) do
             local item = rsBridge.getItem({name=key})
             if (item.amount > 0) then
-            end
-
-            local fuelAmount = 0
-            for i = 1, item.amount, 1 do
-                if (fuelGotten + value <= order.amount) then
-                    fuelAmount = fuelAmount + 1
-                    fuelGotten = fuelGotten + value
-                else
-                    break
+                local fuelAmount = 0
+                for i = 1, item.amount, 1 do
+                    if (fuelGotten + value <= order.amount) then
+                        fuelAmount = fuelAmount + 1
+                        fuelGotten = fuelGotten + value
+                    else
+                        break
+                    end
                 end
-            end
 
-            itemsForExport[#itemsForExport+1] = {
-                name = key,
-                amount = fuelToTake
-            }
+                itemsForExport[#itemsForExport+1] = {
+                    name = key,
+                    count = fuelToTake
+                }
+            end
         end
 
         for i = #itemsForExport, 1, -1 do
-            if rsBridge.getItem(itemsForExport[i].name).amount > itemsForExport[i].amount then
-                itemsForExport[i].amount = itemsForExport[i].amount + 1
+            if rsBridge.getItem(itemsForExport[i].name).amount > itemsForExport[i].count then
+                itemsForExport[i].count = itemsForExport[i].count + 1
                 fuelGotten = fuelGotten + yurtle.fuelItems[itemsForExport[i].name]
 
                 if fuelGotten >= order.amount then
@@ -459,7 +458,7 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
     else
         rsBridge.exportItem({
             name = order.item,
-            amount = order.amount
+            count = order.amount
         }, depositDirection)
     end
 end
