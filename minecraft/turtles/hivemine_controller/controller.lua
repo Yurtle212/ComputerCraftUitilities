@@ -48,13 +48,13 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
             }
 
             if pos1.x > pos2.x then
-                subdivisions[index].startPos.x = pos1.x - subdivisions[index].startPos.x
-                subdivisions[index].endPos.x = pos1.x - subdivisions[index].endPos.x
+                subdivisions[index].startPos.x = -subdivisions[index].startPos.x
+                subdivisions[index].endPos.x = -subdivisions[index].endPos.x
             end
 
             if pos1.z > pos2.z then
-                subdivisions[index].startPos.z = pos1.z - subdivisions[index].startPos.z
-                subdivisions[index].endPos.z = pos1.z - subdivisions[index].endPos.z
+                subdivisions[index].startPos.z = -subdivisions[index].startPos.z
+                subdivisions[index].endPos.z = -subdivisions[index].endPos.z
             end
 
             subdivisions[index] = {
