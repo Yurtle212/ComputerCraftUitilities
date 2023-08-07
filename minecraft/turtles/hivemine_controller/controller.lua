@@ -353,7 +353,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         pos, dir, tmpInstructions = MoveTo(pos, dir, startPos)
         value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-        dir, tmpInstructions = RotateTo(dir, headings["north"])
+        dir, tmpInstructions = RotateTo(dir, sDir)
         value.instructions = TableConcat(value.instructions, tmpInstructions)
 
         value.cost = 0
