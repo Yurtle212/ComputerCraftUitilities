@@ -119,13 +119,13 @@ local function move(pos, way, dir)
     if way == "forward" then
         retVal[#retVal+1] = turtle.dig
         retVal[#retVal+1] = turtle.forward
-        if dir == 1 then
+        if dir == directions["-z"] then
             pos.z = pos.z - 1
-        elseif dir == 2 then
+        elseif dir == directions["-x"] then
             pos.x = pos.x - 1
-        elseif dir == 3 then
+        elseif dir == directions["+z"] then
             pos.z = pos.z + 1
-        elseif dir == 4 then
+        elseif dir == directions["+x"] then
             pos.x = pos.x + 1
         end
     elseif way == "up" then
@@ -158,15 +158,15 @@ function RotateTo(dir, dest)
     while dir ~= dest do
         if (dir > dest) then
             if math.abs(dir - dest) > 2 then
-                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
-            else
                 dir, instructions[#instructions + 1] = turnDirection(dir, "left")
+            else
+                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
             end
         else
             if math.abs(dir - dest) > 2 then
-                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
-            else
                 dir, instructions[#instructions + 1] = turnDirection(dir, "right")
+            else
+                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
             end
         end
     end
