@@ -217,7 +217,7 @@ function CalculateTravelPath(spawnPos, destPos, dir)
     local tmpInstructions = {}
     local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
     
-    if y < Config["travelHeight"] then
+    if pos.y < Config["travelHeight"] then
         pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, Config["travelHeight"], pos.z))
         instructions = TableConcat(instructions, tmpInstructions)
     end
