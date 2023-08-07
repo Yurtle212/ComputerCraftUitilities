@@ -330,10 +330,10 @@ function CalculateCosts(pos1, pos2, bots)
 
     local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
     travelCost = travelCost + (travelDest:sub(SpawnLoc):length() * 2) -- to and from destination
-    travelCost = travelCost * bots                                    -- times the number of bots
+    travelCost = travelCost * #bots                                    -- times the number of bots
 
     local miningCosts = 0
-    for key, value in pairs(instructions) do
+    for key, value in pairs(bots) do
         miningCosts = miningCosts + value.cost
     end
 
