@@ -532,11 +532,13 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local rsBridge = peripheral.find("rsBridge")
     
     local modem = peripheral.wrap("bottom")
-    for i = 1, 1, 1 do
-        local builtInstruction = TableConcat(travelInstructions, instructions[i])
+
+    for key, value in pairs(instructions) do
+        local builtInstruction = TableConcat(travelInstructions, value.instructions)
         builtInstruction = TableConcat(builtInstruction, travelInstructionsBack)
 
-        DeployMiner(builtInstruction, rsBridge, instructions[i].cost + travelCost)
+        DeployMiner(builtInstruction, rsBridge, value.cost + travelCost)
+        break
     end
 end
 
