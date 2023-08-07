@@ -457,7 +457,10 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
             rsBridge.exportItem(itemsForExport[i], depositDirection)
         end
     else
-        rsBridge.exportItem(order, depositDirection)
+        rsBridge.exportItem({
+            name = order.item,
+            amount = order.amount
+        }, depositDirection)
     end
 end
 
