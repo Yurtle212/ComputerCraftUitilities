@@ -212,17 +212,17 @@ local function reverse(tab)
     return rev
 end
 
-function CalculateTravelPath(spawnPos, destPos, dir)
+function CalculateTravelPath(spawnPos, destPos, dir, travelHeight)
     local instructions = {}
     local tmpInstructions = {}
     local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
     
-    if pos.y < Config["travelHeight"] then
-        pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, Config["travelHeight"], pos.z))
+    if pos.y < travelHeight then
+        pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z))
         instructions = TableConcat(instructions, tmpInstructions)
     end
 
-    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, Config["travelHeight"], destPos.z))
+    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z))
     instructions = TableConcat(instructions, tmpInstructions)
 
     pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z))
@@ -370,14 +370,14 @@ end
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local tmp
 
-    local dir = Config["heading"]
+    local dir = headings[Config["heading"]]
     local pos = vector.new(Position.x, Position.y, Position.z)
 
     -- pos, tmp = move(pos, "forward", dir)
     -- dir, tmp = turnDirection(dir, "left")
     -- pos, tmp = move(pos, "forward", dir)
 
-    local travelInstructions = CalculateTravelPath(Position, pos1, dir)
+    local travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
     
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local instructions = CalculateMiningPaths(pos1, subdivisions)
