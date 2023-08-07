@@ -113,11 +113,18 @@ local function turnDirection(dir, turn)
     return dir, retVal
 end
 
-local function move(pos, way, dir)
+local function move(pos, way, dir, dig)
+    if (dig == nil) then
+        dig = true
+    end
+
     local retVal = {}
 
     if way == "forward" then
-        retVal[#retVal+1] = turtle.dig
+        if (dig) then
+            retVal[#retVal+1] = turtle.dig
+        end
+        
         retVal[#retVal+1] = turtle.forward
         if dir == directions["-z"] then
             pos.z = pos.z - 1
@@ -129,11 +136,17 @@ local function move(pos, way, dir)
             pos.x = pos.x + 1
         end
     elseif way == "up" then
-        retVal[#retVal+1] = turtle.digUp
+        if (dig) then
+            retVal[#retVal+1] = turtle.digUp
+        end
+        
         retVal[#retVal+1] = turtle.up
         pos.y = pos.y + 1
     else
-        retVal[#retVal+1] = turtle.digDown
+        if (dig) then
+            retVal[#retVal+1] = turtle.digDown
+        end
+        
         retVal[#retVal+1] = turtle.down
         pos.y = pos.y - 1
     end
@@ -174,41 +187,45 @@ function RotateTo(dir, dest)
     return dir, instructions
 end
 
-function MoveTo(pos, dir, dest)
+function MoveTo(pos, dir, dest, dig)
+    if (dig == nil) then
+        dig = true
+    end
+
     local instructions = {}
     local tmp
 
     while not (pos:equals(dest)) do
         if (pos.y ~= dest.y) then
             if pos.y > dest.y then
-                pos, tmp = move(pos, "down", dir)
+                pos, tmp = move(pos, "down", dir, dig)
                 instructions = TableConcat(instructions, tmp)
             else
-                pos, tmp = move(pos, "up", dir)
+                pos, tmp = move(pos, "up", dir, dig)
                 instructions = TableConcat(instructions, tmp)
             end
         elseif (pos.z ~= dest.z) then
             if (pos.z > dest.z) then
                 dir, tmp = RotateTo(dir, directions["-z"])
                 instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir)
+                pos, tmp = move(pos, "forward", dir, dig)
                 instructions = TableConcat(instructions, tmp)
             else
                 dir, tmp = RotateTo(dir, directions["+z"])
                 instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir)
+                pos, tmp = move(pos, "forward", dir, dig)
                 instructions = TableConcat(instructions, tmp)
             end
         elseif (pos.x ~= dest.x) then
             if (pos.x > dest.x) then
                 dir, tmp = RotateTo(dir, directions["-x"])
                 instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir)
+                pos, tmp = move(pos, "forward", dir, dig)
                 instructions = TableConcat(instructions, tmp)
             else
                 dir, tmp = RotateTo(dir, directions["+x"])
                 instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir)
+                pos, tmp = move(pos, "forward", dir, dig)
                 instructions = TableConcat(instructions, tmp)
             end
         end
@@ -232,20 +249,20 @@ local function reverse(tab)
     return rev
 end
 
-function CalculateTravelPath(spawnPos, destPos, dir, travelHeight)
+function CalculateTravelPath(spawnPos, destPos, dir, travelHeight, dig)
     local instructions = {}
     local tmpInstructions = {}
     local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
     
     if pos.y < travelHeight then
-        pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z))
+        pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z), dig)
         instructions = TableConcat(instructions, tmpInstructions)
     end
 
-    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z))
+    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z), dig)
     instructions = TableConcat(instructions, tmpInstructions)
 
-    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z))
+    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z), dig)
     instructions = TableConcat(instructions, tmpInstructions)
 
     return dir, instructions
@@ -398,8 +415,10 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     -- pos, tmp = move(pos, "forward", dir)
 
     local travelInstructions
+    local travelInstructionsBack
 
     dir, travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
+    dir, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir, Config["travelHeight"], false)
     
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local instructions = CalculateMiningPaths(pos1, subdivisions, dir)
@@ -410,8 +429,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     Debug_PerformPath(travelInstructions, true)
     Debug_PerformPath(instructions, false)
-
-
+    Debug_PerformPath(travelInstructionsBack, true)
 end
 
 -- Initialize()
