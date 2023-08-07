@@ -149,10 +149,10 @@ function MoveTo(pos, dir, dest)
     while not (pos:equals(dest)) do
         if (pos.y ~= dest.y) then
             if pos.y > dest.y then
-                pos, tmp = move(pos, "up", dir)
+                pos, tmp = move(pos, "down", dir)
                 instructions = TableConcat(instructions, tmp)
             else
-                pos, tmp = move(pos, "down", dir)
+                pos, tmp = move(pos, "up", dir)
                 instructions = TableConcat(instructions, tmp)
             end
         elseif (pos.z ~= dest.z) then
