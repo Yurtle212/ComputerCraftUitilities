@@ -67,6 +67,13 @@ local headings = {
     east = 4,
 }
 
+local directions = {
+    ["-z"] = headings["north"],
+    ["+z"] = headings["south"],
+    ["-x"] = headings["west"],
+    ["+x"] = headings["east"],
+}
+
 local function turnDirection(dir, turn)
     local retVal
     if (turn == "left") then
@@ -86,11 +93,16 @@ local function turnDirection(dir, turn)
     return dir, retVal
 end
 
-local function move(pos, way, dir)
-    local retVal
+local function move(pos, way, dir, dig)
+    if (dig == nil) then
+        dig = true
+    end
+
+    local retVal = {}
 
     if way == "forward" then
-        retVal = turtle.forward
+        retVal[#retVal+1] = turtle.dig
+        retVal[#retVal+1] = turtle.forward
         if dir == 1 then
             pos.z = pos.z - 1
         elseif dir == 2 then
@@ -101,9 +113,11 @@ local function move(pos, way, dir)
             pos.x = pos.x + 1
         end
     elseif way == "up" then
+        retVal[#retVal+1] = turtle.digUp
         retVal = turtle.up
         pos.y = pos.y + 1
     else
+        retVal[#retVal+1] = turtle.digDown
         retVal = turtle.down
         pos.y = pos.y - 1
     end
@@ -111,55 +125,91 @@ local function move(pos, way, dir)
     return pos, retVal
 end
 
+function TableConcat(t1,t2)
+    for i=1,#t2 do
+        t1[#t1+1] = t2[i]
+    end
+    return t1
+end
+
+function RotateTo(dir, dest)
+    local instructions = {}
+
+    if type(dest) == "string" then
+        dest = headings[dest]
+    end
+
+    while dir ~= dest do
+        dir, instructions[#instructions + 1] = turnDirection(dir, "left")
+    end
+
+    return dir, instructions
+end
+
+function MoveTo(pos, dir, dest)
+    local instructions = {}
+    local tmp
+
+    while not pos:equals(dest) do
+        if not (pos.y == dest.y) then
+            if pos.y > dest.y then
+                pos, tmp = move(pos, "up", dir)
+                instructions = TableConcat(instructions, tmp)
+            else
+                pos, tmp = move(pos, "down", dir)
+                instructions = TableConcat(instructions, tmp)
+            end
+        elseif not (pos.z == dest.z) then
+            if (pos.z > pos.z) then
+                dir, tmp = RotateTo(dir, directions["-z"])
+                instructions = TableConcat(instructions, tmp)
+                pos, tmp = move(pos, "forward", dir)
+                instructions = TableConcat(instructions, tmp)
+            else
+                dir, tmp = RotateTo(dir, directions["+z"])
+                instructions = TableConcat(instructions, tmp)
+                pos, tmp = move(pos, "forward", dir)
+                instructions = TableConcat(instructions, tmp)
+            end
+        elseif not (pos.x == dest.x) then
+            if (pos.x > pos.x) then
+                dir, tmp = RotateTo(dir, directions["-x"])
+                instructions = TableConcat(instructions, tmp)
+                pos, tmp = move(pos, "forward", dir)
+                instructions = TableConcat(instructions, tmp)
+            else
+                dir, tmp = RotateTo(dir, directions["+x"])
+                instructions = TableConcat(instructions, tmp)
+                pos, tmp = move(pos, "forward", dir)
+                instructions = TableConcat(instructions, tmp)
+            end
+        end
+    end
+
+    return pos, dir, instructions
+end
+
 function CalculateMiningPaths(startPos, subdivisions)
     for key, value in pairs(subdivisions) do
         value.instructions = {}
-        local instructionsIndex = 1
+
+        local tmpInstructions
 
         local dir = 1
         local pos = vector.new(0,0,0)
 
         local distFromStart = value.startPos:sub(startPos)
 
-        while dir ~= 1 do
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        end
-
         local baseStartDir = dir
         local baseStartPos = pos
 
         -- go to assigned area
 
-        if distFromStart.z < 0 then
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        end
+        pos, dir, tmpInstructions = MoveTo(pos, dir, value.startPos)
+        value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-        for z = 1, math.abs(distFromStart.z), 1 do
-            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        if distFromStart.x < 0 then
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        else
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "right")
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        for x = 1, math.abs(distFromStart.x), 1 do
-            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        while dir ~= 1 do
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        end
+        dir, tmpInstructions = RotateTo(dir, headings["north"])
+        value.instructions = TableConcat(value.instructions, tmpInstructions)
 
         local turnLeft = true
 
@@ -173,42 +223,11 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         -- return to start location
 
-        local dirToBaseStart = pos:sub(baseStartPos)
+        pos, dir, tmpInstructions = MoveTo(pos, dir, startPos)
+        value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-        while dir ~= 1 do
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        if dirToBaseStart.z < 0 then
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        for z = 1, math.abs(dirToBaseStart.z), 1 do
-            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        if dirToBaseStart.x < 0 then
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        else
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "right")
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        for x = 1, math.abs(dirToBaseStart.x), 1 do
-            pos, value.instructions[instructionsIndex] = move(pos, "forward", dir)
-            instructionsIndex = instructionsIndex + 1
-        end
-
-        while dir ~= 1 do
-            dir, value.instructions[instructionsIndex] = turnDirection(dir, "left")
-            instructionsIndex = instructionsIndex + 1
-        end
+        dir, tmpInstructions = RotateTo(dir, headings["north"])
+        value.instructions = TableConcat(value.instructions, tmpInstructions)
 
         for i = 1, #value.instructions, 1 do
             -- print(value.instructions[i])
