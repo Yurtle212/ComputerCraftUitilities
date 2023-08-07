@@ -136,7 +136,19 @@ function RotateTo(dir, dest)
     end
 
     while dir ~= dest do
-        dir, instructions[#instructions + 1] = turnDirection(dir, "left")
+        if (dir > dest) then
+            if math.abs(dir - dest) > 2 then
+                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
+            else
+                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
+            end
+        else
+            if math.abs(dir - dest) > 2 then
+                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
+            else
+                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
+            end
+        end
     end
 
     return dir, instructions
@@ -219,7 +231,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         local startDir = dir
 
-        for y = 1, yDist, 1 do
+        for y = 1, yDist+1, 1 do
             for z = 1, zDist, 1 do
                 for x = 1, xDist, 1 do
                     pos, tmpInstructions = move(pos, "forward", dir)
@@ -253,12 +265,14 @@ function CalculateMiningPaths(startPos, subdivisions)
                 value.instructions = TableConcat(value.instructions, tmpInstructions)
             end
 
-            pos, tmpInstructions = move(pos, "down", dir)
-            value.instructions = TableConcat(value.instructions, tmpInstructions)
+            if (y <= yDist) then
+                pos, tmpInstructions = move(pos, "down", dir)
+                value.instructions = TableConcat(value.instructions, tmpInstructions)
 
-            dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
-            dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
-            
+                dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
+                dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
+            end
+
             positiveZ = not positiveZ
             positiveX = not positiveX
         end
