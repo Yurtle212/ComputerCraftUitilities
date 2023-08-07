@@ -205,10 +205,11 @@ local fuelConsumingFunctions = {
 }
 
 local function reverse(tab)
-    for i = 1, #tab//2, 1 do
-        tab[i], tab[#tab-i+1] = tab[#tab-i+1], tab[i]
+    local rev = {}
+    for i=#tab, 1, -1 do
+        rev[#rev+1] = tab[i]
     end
-    return tab
+    return rev
 end
 
 function CalculateMiningPaths(startPos, subdivisions)
@@ -306,7 +307,7 @@ function CalculateMiningPaths(startPos, subdivisions)
             -- os.startTimer(0.5)
             -- os.pullEvent("timer")
             -- value.instructions[i]()
-            for j = 1, fuelConsumingFunctions, 1 do
+            for j = 1, #fuelConsumingFunctions, 1 do
                 if value.instructions[i] == fuelConsumingFunctions[j] then
                     value.cost = value.cost + 1
                 end
