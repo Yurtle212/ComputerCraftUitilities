@@ -1,5 +1,6 @@
 {
     "NOGPS_position": [296,64,-73],
     "heading": "west",
-    "travelHeight": 100
+    "travelHeight": 100,
+    "debug_executePath": false
 }
