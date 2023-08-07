@@ -93,11 +93,7 @@ local function turnDirection(dir, turn)
     return dir, retVal
 end
 
-local function move(pos, way, dir, dig)
-    if (dig == nil) then
-        dig = true
-    end
-
+local function move(pos, way, dir)
     local retVal = {}
 
     if way == "forward" then
