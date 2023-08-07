@@ -212,6 +212,25 @@ local function reverse(tab)
     return rev
 end
 
+function CalculateTravelPath(spawnPos, destPos, dir)
+    local instructions = {}
+    local tmpInstructions = {}
+    local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
+    
+    if y < Config["travelHeight"] then
+        pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, Config["travelHeight"], pos.z))
+        instructions = TableConcat(instructions, tmpInstructions)
+    end
+
+    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, Config["travelHeight"], destPos.z))
+    instructions = TableConcat(instructions, tmpInstructions)
+
+    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z))
+    instructions = TableConcat(instructions, tmpInstructions)
+
+    return dir, instructions
+end
+
 function CalculateMiningPaths(startPos, subdivisions)
     for key, value in pairs(subdivisions) do
         value.instructions = {}
@@ -317,7 +336,14 @@ function CalculateMiningPaths(startPos, subdivisions)
     return subdivisions
 end
 
-function Debug_PerformPath(instructions)
+function Debug_PerformPath(instructions, single)
+    if (single) then
+        for i = 1, #instructions, 1 do
+            instructions[i]()
+        end
+        return
+    end
+
     for key, value in pairs(instructions) do
         for i = 1, #value.instructions, 1 do
             value.instructions[i]()
@@ -327,6 +353,7 @@ end
 
 function CalculateCosts(pos1, pos2, bots)
     local travelDest = pos1
+
 
     local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
     travelCost = travelCost + (travelDest:sub(SpawnLoc):length() * 2) -- to and from destination
@@ -341,6 +368,17 @@ function CalculateCosts(pos1, pos2, bots)
 end
 
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
+    local tmp
+
+    local dir = Config["heading"]
+    local pos = vector.new(Position.x, Position.y, Position.z)
+
+    -- pos, tmp = move(pos, "forward", dir)
+    -- dir, tmp = turnDirection(dir, "left")
+    -- pos, tmp = move(pos, "forward", dir)
+
+    local travelInstructions = CalculateTravelPath(Position, pos1, dir)
+    
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local instructions = CalculateMiningPaths(pos1, subdivisions)
     instructions = reverse(instructions)
@@ -348,7 +386,10 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local cost = CalculateCosts(pos1, pos2, instructions)
     print("Cost: " .. cost)
 
-    Debug_PerformPath(instructions)
+    Debug_PerformPath(travelInstructions, true)
+    Debug_PerformPath(instructions, false)
+
+
 end
 
 -- Initialize()
@@ -356,4 +397,4 @@ end
 -- CalculateMiningPaths(vector.new(0, 0, 0), testSubs)
 
 Initialize()
-DeployMiners(vector.new(0, 0, 0), vector.new(3, 3, 3), 2, 2)
+DeployMiners(vector.new(277, 63, -49), vector.new(272, 59, -54), 2, 2)
