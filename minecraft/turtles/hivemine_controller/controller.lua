@@ -512,7 +512,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     dir, tmp, travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
     travelCost = travelCost + tmp
-    dir, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir,
+    dir, tmp, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir,
         Config["travelHeight"], false)
     travelCost = travelCost + tmp
 
