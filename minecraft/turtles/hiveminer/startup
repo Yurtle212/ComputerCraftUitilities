@@ -6,7 +6,7 @@ else
     print("Miner Turtle")
 end
 
-local modem = peripheral.wrap("forward")
+local modem = peripheral.wrap("front")
 modem.open(1)
 
 modem.transmit(1, 1, turtle.getFuelLevel())
