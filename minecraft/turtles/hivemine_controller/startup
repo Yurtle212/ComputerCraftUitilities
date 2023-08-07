@@ -1,4 +1,6 @@
 -- get latest version
+shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hivemine_controller/config")
+
 shell.run("delete startup")
 shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hivemine_controller/startup")
 
@@ -9,4 +11,4 @@ shell.run("delete json")
 shell.run("wget https://pastebin.com/raw/4nRg9CHU json")
 
 -- run script
-shell.run("controller 5555")
+shell.run("controller")

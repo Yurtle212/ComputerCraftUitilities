@@ -6,4 +6,17 @@ end
 turtle.turnLeft()
 turtle.forward()
 
+if (~turtle.inspectDown()) then -- return to controller
+    print("no setup")
+    turtle.digUp()
+    turtle.up()
+    turtle.turnLeft()
+    turtle.turnLeft()
+    turtle.dig()
+    turtle.forward()
+    turtle.turnRight()
+    turtle.dig()
+    turtle.forward()
+end
+
 shell.run("disk/setup")
