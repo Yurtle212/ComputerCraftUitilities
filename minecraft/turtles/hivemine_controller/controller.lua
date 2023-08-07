@@ -206,7 +206,7 @@ function CalculateMiningPaths(startPos, subdivisions)
             instructionsIndex = instructionsIndex + 1
         end
 
-        while startDir ~= dir do
+        while baseStartDir ~= dir do
             value.instructions[instructionsIndex] = turtle.turnLeft
             instructionsIndex = instructionsIndex + 1
             logDirection("left")
@@ -265,4 +265,4 @@ end
 
 -- Initialize()
 local testSubs = GetMiningSubdivisions(vector.new(0, 0, 0), vector.new(10, 10, 10), 2, 2)
-CalculateMiningPaths(testSubs)
+CalculateMiningPaths(vector.new(0, 0, 0), testSubs)
