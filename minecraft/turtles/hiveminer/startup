@@ -1,6 +1,6 @@
 if (fs.exists("startup")) then
     print("Controller Turtle")
-    exit(1)
+    error()
 else
     print("Miner Turtle")
 end
