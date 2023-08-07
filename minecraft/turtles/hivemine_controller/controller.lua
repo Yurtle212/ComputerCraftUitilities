@@ -246,7 +246,7 @@ function CalculateMiningPaths(startPos, subdivisions)
 
         local startDir = dir
 
-        for y = 1, yDist+1, 1 do
+        for y = 1, yDist, 1 do
             for z = 1, zDist, 1 do
                 for x = 1, xDist, 1 do
                     pos, tmpInstructions = move(pos, "forward", dir)
@@ -280,7 +280,7 @@ function CalculateMiningPaths(startPos, subdivisions)
                 value.instructions = TableConcat(value.instructions, tmpInstructions)
             end
 
-            if (y <= yDist) then
+            if (y < yDist) then
                 pos, tmpInstructions = move(pos, "down", dir)
                 value.instructions = TableConcat(value.instructions, tmpInstructions)
 
