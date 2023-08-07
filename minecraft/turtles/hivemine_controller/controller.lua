@@ -71,7 +71,8 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
                 subdivisions[index].endPos.z = subdivisions[index].endPos.z - 1
             end
 
-            subdivisions[index] = subdivisions[index]:add(pos1)
+            subdivisions[index].startPos = subdivisions[index].startPos:add(pos1)
+            subdivisions[index].endPos = subdivisions[index].endPos:add(pos1)
 
             print(json.encode(subdivisions[index]))
         end
