@@ -329,7 +329,7 @@ function CalculateCosts(pos1, pos2, bots)
     local travelDest = pos1
 
     local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
-    travelCost = travelCost + (travelDest:sub(SpawnLoc).length() * 2) -- to and from destination
+    travelCost = travelCost + (travelDest:sub(SpawnLoc):length() * 2) -- to and from destination
     travelCost = travelCost * bots                                    -- times the number of bots
 
     local miningCosts = 0
