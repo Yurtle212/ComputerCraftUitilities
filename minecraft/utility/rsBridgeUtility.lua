@@ -1,3 +1,5 @@
+local yurtle = require "yurtle"
+
 local function RetrieveItemFromStorage(rsBridge, order, depositDirection)
     local items = rsBridge.listItems()
     if (order.item == "fuel") then
