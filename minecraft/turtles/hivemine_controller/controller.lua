@@ -522,10 +522,12 @@ function DeployMiner(instructions, rsBridge, modem, cost)
     modem.transmit(1, 1, "refuel")
 
     os.pullEvent("modem_message")
+
+
 end
 
 function PrepareDeploy(rsBridge)
-    local slot = findItemInInventory("empty")
+    local slot = yurtle.findItemInInventory("empty")
     if (slot == nil) then
         print("No empty space in inventory")
         return false
