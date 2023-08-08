@@ -4,6 +4,8 @@ local movement = require "movement"
 
 os.loadAPI("json")
 
+local params = { ... }
+
 function UpdateSetup(channel)
     shell.run("delete disk/setup")
     shell.run(
@@ -31,6 +33,80 @@ function Initialize()
     end
 
     print("Controller started")
+
+    if next(params) == nil then
+        WS = assert(http.websocket("wss://yurtle.net/cc/default"))
+    else
+        WS = assert(http.websocket("wss://yurtle.net/cc/" .. params[1]))
+    end
+
+    UUID = "ccHiveminerController"
+
+    while true do
+        local raw = WS.receive()
+        if (raw == nil) then
+            print("re-init")
+            os.startTimer(2)
+            os.pullEvent("timer")
+
+            if next(params) == nil then
+                WS = assert(http.websocket("wss://yurtle.net/cc/default"))
+            else
+                WS = assert(http.websocket("wss://yurtle.net/cc/" .. params[1]))
+            end
+        end
+
+        if (raw ~= nil) then
+            local signal = json.decode(raw)
+            if (signal.type == "hiveminer") then
+                print("Attempting to hivemine")
+                if (signal.data.pos1 ~= nil and signal.data.pos2 ~= nil) then
+                    local pos1 = vector.new(signal.data.pos1.x, signal.data.pos1.y, signal.data.pos1.z)
+                    local pos2 = vector.new(signal.data.pos2.x, signal.data.pos2.y, signal.data.pos2.z)
+
+                    local ack = {
+                        type = "ack",
+                        data = {
+                            UUID = UUID,
+                            message = "Deploying bots..."
+                        },
+                        timestamp = os.time()
+                    }
+
+                    WS.close()
+                    DeployMiners(pos1, pos2, signal.data.subdivisions.x, signal.data.subdivisions.y)
+
+                    if next(params) == nil then
+                        WS = assert(http.websocket("wss://yurtle.net/cc/default"))
+                    else
+                        WS = assert(http.websocket("wss://yurtle.net/cc/" .. params[1]))
+                    end
+
+                    local ack = {
+                        type = "ack",
+                        data = {
+                            UUID = UUID,
+                            message = "Bots Retrieved"
+                        },
+                        timestamp = os.time()
+                    }
+                    WS.send(json.encode(ack))
+                else
+                    local ack = {
+                        type = "ack",
+                        data = {
+                            UUID = UUID,
+                            success = false
+                        },
+                        timestamp = os.time()
+                    }
+                    WS.send(json.encode(ack))
+                end
+            elseif signal.type == "init" then
+                UUID = signal.data.UUID
+            end
+        end
+    end
 end
 
 local function reverse(tab)
@@ -131,7 +207,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
     for key, value in pairs(subdivisions) do
         value.instructions = {}
 
-        value.instructions[#value.instructions+1] = "digsite"
+        value.instructions[#value.instructions + 1] = "digsite"
 
         local tmpInstructions
 
@@ -153,7 +229,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-        value.instructions[#value.instructions+1] = "digplot"
+        value.instructions[#value.instructions + 1] = "digplot"
 
         local positiveX = true
         local positiveZ = true
@@ -219,7 +295,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         dir, tmpInstructions = movement.RotateTo(dir, sDir)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-        value.instructions[#value.instructions+1] = "returning"
+        value.instructions[#value.instructions + 1] = "returning"
 
         value.cost = 0
 
@@ -312,7 +388,7 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
             item = Config["miner_left"],
             amount = 1
         }, "west")
-    
+
         slot = yurtle.findItemInInventory(Config["miner_left"])
         if (slot == nil) then
             print("No " .. Config["miner_left"])
@@ -328,7 +404,7 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
             item = Config["miner_right"],
             amount = 1
         }, "west")
-    
+
         slot = yurtle.findItemInInventory(Config["miner_right"])
         if (slot == nil) then
             print("No " .. Config["miner_right"])
@@ -360,20 +436,20 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
         os.pullEvent("modem_message")
         local subInstructions = {}
 
-        for i = instructionIndex, instructionIndex+maxInstructionsPerMessage, 1 do
+        for i = instructionIndex, instructionIndex + maxInstructionsPerMessage, 1 do
             -- subInstructions[#subInstructions+1] = instructions[instructionIndex]
             if (type(instructions[instructionIndex]) == "function") then
                 for key, value in pairs(functiontable) do
                     if value == instructions[instructionIndex] then
-                        subInstructions[#subInstructions+1] = key
+                        subInstructions[#subInstructions + 1] = key
                         break
                     end
                 end
             else
-                subInstructions[#subInstructions+1] = instructions[instructionIndex]
+                subInstructions[#subInstructions + 1] = instructions[instructionIndex]
             end
-            
-            
+
+
             instructionIndex = instructionIndex + 1
 
             if (instructionIndex > instructionCount) then
@@ -430,11 +506,11 @@ function PrepareDeploy(rsBridge)
         turtle.select(slot)
         turtle.equipRight()
         Position = vector.new(gps.locate())
-    
+
         turtle.equipRight()
         rsBridgeUtility.PutItemInStorage(rsBridge, slot, "west", 64)
     end
-    
+
     -- get pickaxe
 
     rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
@@ -454,7 +530,8 @@ end
 
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     shell.run("delete disk/startup")
-    shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
+    shell.run(
+    "wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
 
     print("\n")
 
@@ -512,12 +589,12 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     end
 
     -- check if enough items for everyone
-    local picks = rsBridge.getItem({"minecraft:diamond_pickaxe"})
+    local picks = rsBridge.getItem({ "minecraft:diamond_pickaxe" })
     if picks.amount < #instructions then
         print("not enough pickaxes")
         return
     end
-    
+
     local storedFuel = rsBridgeUtility.getFuelInStorage(rsBridge)
     print("Stored fuel: " .. storedFuel)
     if (storedFuel < cost) then
@@ -566,4 +643,3 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 end
 
 Initialize()
-DeployMiners(vector.new(277, 61, -49), vector.new(272, 57, -54), 2, 2)
