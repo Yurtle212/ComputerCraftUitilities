@@ -343,14 +343,29 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
     local maxInstructionsPerMessage = 50
     local instructionIndex = 0
 
+    local functiontable = {
+        ["forward"] = turtle.forward,
+        ["back"] = turtle.back,
+        ["up"] = turtle.up,
+        ["down"] = turtle.down,
+        ["turnLeft"] = turtle.turnLeft,
+        ["turnRight"] = turtle.turnRight,
+    }
+
     modem.transmit(1, 1, equipMessage)
     while instructionIndex < instructionCount do
         os.pullEvent("modem_message")
         local subInstructions = {}
 
         for i = instructionIndex, instructionIndex+maxInstructionsPerMessage, 1 do
-            subInstructions[#subInstructions+1] = instructions[instructionIndex]
-
+            -- subInstructions[#subInstructions+1] = instructions[instructionIndex]
+            for key, value in pairs(functiontable) do
+                if value == instructions[instructionIndex] then
+                    subInstructions[#subInstructions+1] = key
+                    break
+                end
+            end
+            
             instructionIndex = instructionIndex + 1
 
             if (instructionIndex > instructionCount) then

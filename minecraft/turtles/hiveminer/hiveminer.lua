@@ -16,6 +16,15 @@ local itemValues = {
     ["minecraft:cobbled_deepslate"] = 39,
 }
 
+local functiontable = {
+    ["forward"] = turtle.forward,
+    ["back"] = turtle.back,
+    ["up"] = turtle.up,
+    ["down"] = turtle.down,
+    ["turnLeft"] = turtle.turnLeft,
+    ["turnRight"] = turtle.turnRight,
+}
+
 function Main(instructions, pos, dir)
     local flags = {}
     local retryTimes = 0
@@ -24,7 +33,7 @@ function Main(instructions, pos, dir)
 
     for i = 1, #instructions, 1 do
         if (type(instructions[i]) == "function") then
-            local successful = instructions[i]()
+            local successful = functiontable[instructions[i]]()
         else
             flags[#flags + 1] = instructions[i]
             print(instructions[i])
