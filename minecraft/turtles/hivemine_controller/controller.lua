@@ -455,11 +455,13 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
         for i = 1, #itemsForExport, 1 do
             rsBridge.exportItem(itemsForExport[i], depositDirection)
         end
+        return true
     else
         rsBridge.exportItem({
             name = order.item,
             count = order.amount
         }, depositDirection)
+        return true
     end
 end
 
