@@ -7,9 +7,9 @@ local headings = {
 
 local directions = {
     ["-z"] = headings["north"],
+    ["+x"] = headings["east"],
     ["+z"] = headings["south"],
     ["-x"] = headings["west"],
-    ["+x"] = headings["east"],
 }
 
 local function turnDirection(dir, turn)

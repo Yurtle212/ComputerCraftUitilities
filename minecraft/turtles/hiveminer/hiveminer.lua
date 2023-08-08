@@ -28,6 +28,10 @@ local functiontable = {
     ["digDown"] = turtle.digDown,
 }
 
+local function firstToUpper(str)
+    return (str:gsub("^%l", string.upper))
+end
+
 function Main(instructions, pos, dir)
     local flags = {}
     local retryTimes = 0
@@ -64,10 +68,38 @@ function Main(instructions, pos, dir)
                         break
                     end
                 end
+            else
+                while true do
+                    local inspection
+                    local has_block
+                    if instructions[i] == "forward" then
+                        has_block, inspection = turtle.inspect()
+                    elseif instructions[i] == "up" then
+                        has_block, inspection = turtle.inspectUp()
+                    elseif instructions[i] == "down" then
+                        has_block, inspection = turtle.inspectDown()
+                    end
+
+                    if has_block then
+                        if string.match(inspection.name, "turtle") then
+                            print("No cannibalism")
+                            os.startTimer(1)
+                            os.pullEvent()
+                        elseif string.match(inspection.name, "bedrock") then
+                            print("bedrock, dying.")
+                            return
+                        else
+                            print("digging extra block")
+                            functiontable[("dig" .. firstToUpper(instructions[i]))]()
+                        end
+                    else
+                        break
+                    end
+                end
             end
 
             successful = functiontable[instructions[i]]()
-            
+
             if string.match(instructions[i], "dig") then
                 successful = true
             end
@@ -85,10 +117,6 @@ function Main(instructions, pos, dir)
                     print("Out of fuel")
                     return
                 end
-            elseif turtle.inspect() and (retryTimes <= 60) then
-                local has_block, data = turtle.inspect()
-                i = i - 2
-                retryTimes = retryTimes + 1
             else
                 print("Unknown error")
                 print(instructions[i])
@@ -110,6 +138,10 @@ function Main(instructions, pos, dir)
     redstone.setOutput("bottom", true)
 
     print("Finished, shutting down.")
+end
+
+function ReturnHome()
+    -- get instructions to go home and return them.
 end
 
 function Init()
