@@ -61,6 +61,12 @@ function Main(instructions, pos, dir)
                 retryTimes = retryTimes + 1
                 os.startTimer(1)
                 os.pullEvent("timer")
+            elseif turtle.inspect() and (retryTimes <= 60) then
+                local has_block, data = turtle.inspect()
+                if data.name ~= "minecraft:bedrock" then
+                    i = i - 2
+                    retryTimes = retryTimes + 1
+                end
             else
                 print("Unknown error")
                 print(instructions[i])
