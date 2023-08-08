@@ -13,7 +13,7 @@ local function refuel(amount)
     local fueledAmount = 0
 
     while fueledAmount < amount do
-        local slot = findItemInInventory("fuel")
+        local slot = yurtle.findItemInInventory("fuel")
         if (slot == nil) then
             break
         end
