@@ -41,17 +41,22 @@ function Main(instructions, pos, dir)
                 for i = 1, 10, 1 do
                     local inspection
                     local has_block
+
                     if instructions[i] == "dig" then
                         has_block, inspection = turtle.inspect()
                     elseif instructions[i] == "digUp" then
-                        has_block, inspection = turtle.inspect()
+                        has_block, inspection = turtle.inspectUp()
                     elseif instructions[i] == "digDown" then
-                        has_block, inspection = turtle.inspect()
+                        has_block, inspection = turtle.inspectDown()
                     end
 
-                    if has_block and inspection.name.match("computercraft") then
-                        os.startTimer(1)
-                        os.pullEvent()
+                    if has_block then
+                        if inspection.name.match("computercraft") then
+                            os.startTimer(1)
+                            os.pullEvent()
+                        else
+                            break
+                        end
                     else
                         break
                     end
