@@ -34,7 +34,8 @@ function Main(instructions, pos, dir)
 
     print("Deployed, running instructions.")
 
-    for i = 1, #instructions, 1 do
+    local i = 1
+    while i < #instructions do
         local successful
         -- print(instructions[i])
         if (functiontable[instructions[i]] ~= nil) then
@@ -86,10 +87,8 @@ function Main(instructions, pos, dir)
                 end
             elseif turtle.inspect() and (retryTimes <= 60) then
                 local has_block, data = turtle.inspect()
-                if data.name ~= "minecraft:bedrock" then
-                    i = i - 3
-                    retryTimes = retryTimes + 1
-                end
+                i = i - 2
+                retryTimes = retryTimes + 1
             else
                 print("Unknown error")
                 print(instructions[i])
@@ -98,6 +97,8 @@ function Main(instructions, pos, dir)
         else
             retryTimes = 0
         end
+
+        i = i + 1
     end
 
     os.pullEvent("redstone")
