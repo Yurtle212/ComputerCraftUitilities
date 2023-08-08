@@ -38,7 +38,7 @@ function Main(instructions, pos, dir)
         local successful
         -- print(instructions[i])
         if (functiontable[instructions[i]] ~= nil) then
-            if flags[#flags] ~= "digplot" and string.match(instructions[i], "dig") then
+            if string.match(instructions[i], "dig") then
                 for c = 1, 10, 1 do
                     local inspection
                     local has_block
