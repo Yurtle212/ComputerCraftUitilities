@@ -51,7 +51,7 @@ function Main(instructions, pos, dir)
                     end
 
                     if has_block then
-                        if inspection.name.match("turtle") then
+                        if string.match(inspection.name, "turtle") then
                             print("No cannibalism")
                             os.startTimer(1)
                             os.pullEvent()

@@ -532,7 +532,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
             local event, side = os.pullEvent("peripheral")
             if side == "top" then
                 local has_block, inspection = turtle.inspectUp()
-                if inspection.name.match("turtle") then
+                if string.match(inspection.name, "turtle") then
                     break
                 end
             end
