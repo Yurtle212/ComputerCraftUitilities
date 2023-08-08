@@ -117,34 +117,34 @@ local function MoveTo(pos, dir, dest, dig)
         if (pos.y ~= dest.y) then
             if pos.y > dest.y then
                 pos, tmp = move(pos, "down", dir, dig)
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
             else
                 pos, tmp = move(pos, "up", dir, dig)
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
             end
         elseif (pos.z ~= dest.z) then
             if (pos.z > dest.z) then
                 dir, tmp = RotateTo(dir, directions["-z"])
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
                 pos, tmp = move(pos, "forward", dir, dig)
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
             else
                 dir, tmp = RotateTo(dir, directions["+z"])
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
                 pos, tmp = move(pos, "forward", dir, dig)
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
             end
         elseif (pos.x ~= dest.x) then
             if (pos.x > dest.x) then
                 dir, tmp = RotateTo(dir, directions["-x"])
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
                 pos, tmp = move(pos, "forward", dir, dig)
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
             else
                 dir, tmp = RotateTo(dir, directions["+x"])
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
                 pos, tmp = move(pos, "forward", dir, dig)
-                instructions = movement.TableConcat(instructions, tmp)
+                instructions = TableConcat(instructions, tmp)
             end
         end
     end
