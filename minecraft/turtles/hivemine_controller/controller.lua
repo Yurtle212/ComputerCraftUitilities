@@ -552,7 +552,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         end
 
     else
-        Position = gps.locate()
+        Position = vector.new(gps.locate())
     end
 
     -- plot paths
