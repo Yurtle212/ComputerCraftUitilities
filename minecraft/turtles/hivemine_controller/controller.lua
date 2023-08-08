@@ -310,7 +310,7 @@ function PrepareDeploy(rsBridge)
     end
 
     rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
-        name = "computercraft:wireless_modem_advanced",
+        item = "computercraft:wireless_modem_advanced",
         amount = 1
     }, "west")
 
@@ -329,7 +329,7 @@ function PrepareDeploy(rsBridge)
     -- get pickaxe
 
     rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
-        name = "minecraft:diamond_pickaxe",
+        item = "minecraft:diamond_pickaxe",
         amount = 1
     }, "west")
 
