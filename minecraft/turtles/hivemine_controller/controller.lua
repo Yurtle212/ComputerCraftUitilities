@@ -487,10 +487,10 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
         modem.transmit(1, 1, instructionMessage)
     end
 
-    print("sent " .. instructionIndex .. " instructions")
+    -- print("sent " .. instructionIndex .. " instructions")
 
     os.pullEvent("peripheral_detach")
-    print("deployed successfully")
+    -- print("deployed successfully")
 end
 
 function PrepareDeploy(rsBridge)
