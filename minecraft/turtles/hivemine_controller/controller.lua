@@ -315,14 +315,22 @@ end
 function Debug_PerformPath(instructions, single)
     if (single) then
         for i = 1, #instructions, 1 do
-            instructions[i]()
+            if (type(instructions[i]) == "function") then
+                instructions[i]()
+            else
+                print(instructions[i])
+            end
         end
         return
     end
 
     for key, value in pairs(instructions) do
         for i = 1, #value.instructions, 1 do
-            value.instructions[i]()
+            if (type(value.instructions[i]) == "function") then
+                value.instructions[i]()
+            else
+                print(value.instructions[i])
+            end
         end
     end
 end
