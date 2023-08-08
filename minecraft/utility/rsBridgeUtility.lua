@@ -72,7 +72,7 @@ local function getFuelInStorage(rsBridge)
     local storedFuel = 0
     for key, value in pairs(yurtle.fuelItems) do
         local item = rsBridge.getItem({ name = key })
-        storedFuel = storedFuel + (value * item.count)
+        storedFuel = storedFuel + (value * item.amount)
     end
     return storedFuel
 end
