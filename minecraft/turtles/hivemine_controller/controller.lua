@@ -520,7 +520,6 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         builtInstruction = movement.TableConcat(builtInstruction, travelInstructionsBack)
 
         DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost, startPos, startDir)
-        break
     end
 end
 
