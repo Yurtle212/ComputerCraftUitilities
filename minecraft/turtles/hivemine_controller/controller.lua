@@ -1,6 +1,7 @@
 local yurtle = require "yurtle"
 local rsBridgeUtility = require "rsBridgeUtility"
 local movement = require "movement"
+
 os.loadAPI("json")
 
 function UpdateSetup(channel)
