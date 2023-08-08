@@ -103,7 +103,7 @@ function Init()
 
     print(#fullInstructions .. " instructions")
 
-    Main(fullInstructions, message.position, message.direction)
+    Main(fullInstructions, pos, dir)
 end
 
 Init()
