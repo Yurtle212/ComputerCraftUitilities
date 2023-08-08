@@ -92,7 +92,7 @@ function Init()
         print(#fullInstructions)
     end
 
-    print(#message.moveInstructions .. " instructions")
+    print(#fullInstructions .. " instructions")
 
     Main(fullInstructions, message.position, message.direction)
 end
