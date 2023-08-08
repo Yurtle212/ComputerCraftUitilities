@@ -1,4 +1,6 @@
 local yurtle = require "yurtle"
+local rsBridgeUtility = require "rsBridgeUtility"
+local movement = require "movement"
 os.loadAPI("json")
 
 function UpdateSetup(channel)
@@ -29,6 +31,21 @@ function Initialize()
 
     print("Controller started")
 end
+
+local function reverse(tab)
+    local rev = {}
+    for i = #tab, 1, -1 do
+        rev[#rev + 1] = tab[i]
+    end
+    return rev
+end
+
+local fuelConsumingFunctions = {
+    turtle.forward,
+    turtle.up,
+    turtle.down,
+    turtle.back
+}
 
 function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local wholeSize = pos1:sub(pos2)
@@ -81,175 +98,6 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     return subdivisions
 end
 
-local headings = {
-    north = 1,
-    east = 2,
-    south = 3,
-    west = 4,
-}
-
-local directions = {
-    ["-z"] = headings["north"],
-    ["+z"] = headings["south"],
-    ["-x"] = headings["west"],
-    ["+x"] = headings["east"],
-}
-
-local function turnDirection(dir, turn)
-    local retVal
-    if (turn == "left") then
-        retVal = turtle.turnLeft
-        dir = dir - 1
-    else
-        retVal = turtle.turnRight
-        dir = dir + 1
-    end
-
-    if (dir <= 0) then
-        dir = 4
-    elseif (dir >= 5) then
-        dir = 1
-    end
-
-    return dir, retVal
-end
-
-local function move(pos, way, dir, dig)
-    if (dig == nil) then
-        dig = true
-    end
-
-    local retVal = {}
-
-    if way == "forward" then
-        if (dig) then
-            retVal[#retVal + 1] = turtle.dig
-        end
-
-        retVal[#retVal + 1] = turtle.forward
-        if dir == directions["-z"] then
-            pos.z = pos.z - 1
-        elseif dir == directions["-x"] then
-            pos.x = pos.x - 1
-        elseif dir == directions["+z"] then
-            pos.z = pos.z + 1
-        elseif dir == directions["+x"] then
-            pos.x = pos.x + 1
-        end
-    elseif way == "up" then
-        if (dig) then
-            retVal[#retVal + 1] = turtle.digUp
-        end
-
-        retVal[#retVal + 1] = turtle.up
-        pos.y = pos.y + 1
-    else
-        if (dig) then
-            retVal[#retVal + 1] = turtle.digDown
-        end
-
-        retVal[#retVal + 1] = turtle.down
-        pos.y = pos.y - 1
-    end
-
-    return pos, retVal
-end
-
-function TableConcat(t1, t2)
-    for i = 1, #t2 do
-        t1[#t1 + 1] = t2[i]
-    end
-    return t1
-end
-
-function RotateTo(dir, dest)
-    local instructions = {}
-
-    if type(dest) == "string" then
-        dest = headings[dest]
-    end
-
-    while dir ~= dest do
-        if (dir > dest) then
-            if math.abs(dir - dest) > 2 then
-                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
-            else
-                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
-            end
-        else
-            if math.abs(dir - dest) > 2 then
-                dir, instructions[#instructions + 1] = turnDirection(dir, "left")
-            else
-                dir, instructions[#instructions + 1] = turnDirection(dir, "right")
-            end
-        end
-    end
-
-    return dir, instructions
-end
-
-function MoveTo(pos, dir, dest, dig)
-    if (dig == nil) then
-        dig = true
-    end
-
-    local instructions = {}
-    local tmp
-
-    while not (pos:equals(dest)) do
-        if (pos.y ~= dest.y) then
-            if pos.y > dest.y then
-                pos, tmp = move(pos, "down", dir, dig)
-                instructions = TableConcat(instructions, tmp)
-            else
-                pos, tmp = move(pos, "up", dir, dig)
-                instructions = TableConcat(instructions, tmp)
-            end
-        elseif (pos.z ~= dest.z) then
-            if (pos.z > dest.z) then
-                dir, tmp = RotateTo(dir, directions["-z"])
-                instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir, dig)
-                instructions = TableConcat(instructions, tmp)
-            else
-                dir, tmp = RotateTo(dir, directions["+z"])
-                instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir, dig)
-                instructions = TableConcat(instructions, tmp)
-            end
-        elseif (pos.x ~= dest.x) then
-            if (pos.x > dest.x) then
-                dir, tmp = RotateTo(dir, directions["-x"])
-                instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir, dig)
-                instructions = TableConcat(instructions, tmp)
-            else
-                dir, tmp = RotateTo(dir, directions["+x"])
-                instructions = TableConcat(instructions, tmp)
-                pos, tmp = move(pos, "forward", dir, dig)
-                instructions = TableConcat(instructions, tmp)
-            end
-        end
-    end
-
-    return pos, dir, instructions
-end
-
-local fuelConsumingFunctions = {
-    turtle.forward,
-    turtle.up,
-    turtle.down,
-    turtle.back
-}
-
-local function reverse(tab)
-    local rev = {}
-    for i = #tab, 1, -1 do
-        rev[#rev + 1] = tab[i]
-    end
-    return rev
-end
-
 function CalculateTravelPath(spawnPos, destPos, dir, travelHeight, dig)
     local cost = 0
     local instructions = {}
@@ -257,15 +105,15 @@ function CalculateTravelPath(spawnPos, destPos, dir, travelHeight, dig)
     local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
 
     if pos.y < travelHeight then
-        pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z), dig)
-        instructions = TableConcat(instructions, tmpInstructions)
+        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z), dig)
+        instructions = movement.TableConcat(instructions, tmpInstructions)
     end
 
-    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z), dig)
-    instructions = TableConcat(instructions, tmpInstructions)
+    pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z), dig)
+    instructions = movement.TableConcat(instructions, tmpInstructions)
 
-    pos, dir, tmpInstructions = MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z), dig)
-    instructions = TableConcat(instructions, tmpInstructions)
+    pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z), dig)
+    instructions = movement.TableConcat(instructions, tmpInstructions)
 
     for i = 1, #instructions, 1 do
         for j = 1, #fuelConsumingFunctions, 1 do
@@ -294,13 +142,13 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         -- go to assigned area
 
-        pos, dir, tmpInstructions = MoveTo(pos, dir, value.startPos)
-        value.instructions = TableConcat(value.instructions, tmpInstructions)
+        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, value.startPos)
+        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
         -- mine
 
-        dir, tmpInstructions = RotateTo(dir, directions["+x"])
-        value.instructions = TableConcat(value.instructions, tmpInstructions)
+        dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
+        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
         local positiveX = true
         local positiveZ = true
@@ -315,43 +163,43 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         for y = 1, yDist, 1 do
             for z = 1, zDist, 1 do
                 for x = 1, xDist, 1 do
-                    pos, tmpInstructions = move(pos, "forward", dir)
-                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                    pos, tmpInstructions = movement.move(pos, "forward", dir)
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
                 end
 
                 if (positiveZ) then
-                    dir, tmpInstructions = RotateTo(dir, directions["+z"])
-                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+z"])
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
                 else
-                    dir, tmpInstructions = RotateTo(dir, directions["-z"])
-                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-z"])
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
                 end
 
-                pos, tmpInstructions = move(pos, "forward", dir)
-                value.instructions = TableConcat(value.instructions, tmpInstructions)
+                pos, tmpInstructions = movement.move(pos, "forward", dir)
+                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
                 if (positiveX) then
-                    dir, tmpInstructions = RotateTo(dir, directions["-x"])
-                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-x"])
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
                 else
-                    dir, tmpInstructions = RotateTo(dir, directions["+x"])
-                    value.instructions = TableConcat(value.instructions, tmpInstructions)
+                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
                 end
 
                 positiveX = not positiveX
             end
 
             for x = 1, xDist, 1 do
-                pos, tmpInstructions = move(pos, "forward", dir)
-                value.instructions = TableConcat(value.instructions, tmpInstructions)
+                pos, tmpInstructions = movement.move(pos, "forward", dir)
+                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
             end
 
             if (y < yDist) then
-                pos, tmpInstructions = move(pos, "down", dir)
-                value.instructions = TableConcat(value.instructions, tmpInstructions)
+                pos, tmpInstructions = movement.move(pos, "down", dir)
+                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-                dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
-                dir, value.instructions[#value.instructions + 1] = turnDirection(dir, "left")
+                dir, value.instructions[#value.instructions + 1] = movement.turnDirection(dir, "left")
+                dir, value.instructions[#value.instructions + 1] = movement.turnDirection(dir, "left")
             end
 
             positiveZ = not positiveZ
@@ -360,19 +208,15 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         -- return to start location
 
-        pos, dir, tmpInstructions = MoveTo(pos, dir, startPos)
-        value.instructions = TableConcat(value.instructions, tmpInstructions)
+        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, startPos)
+        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-        dir, tmpInstructions = RotateTo(dir, sDir)
-        value.instructions = TableConcat(value.instructions, tmpInstructions)
+        dir, tmpInstructions = movement.RotateTo(dir, sDir)
+        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
         value.cost = 0
 
         for i = 1, #value.instructions, 1 do
-            -- print(value.instructions[i])
-            -- os.startTimer(0.5)
-            -- os.pullEvent("timer")
-            -- value.instructions[i]()
             for j = 1, #fuelConsumingFunctions, 1 do
                 if value.instructions[i] == fuelConsumingFunctions[j] then
                     value.cost = value.cost + 1
@@ -399,10 +243,6 @@ function Debug_PerformPath(instructions, single)
 end
 
 function CalculateCosts(travelCost, bots)
-    -- local travelDest = pos1
-
-    -- local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
-    -- travelCost = travelCost + (travelDest:sub(SpawnLoc):length() * 2) -- to and from destination
     travelCost = travelCost * #bots -- times the number of bots
 
     local miningCosts = 0
@@ -413,76 +253,8 @@ function CalculateCosts(travelCost, bots)
     return travelCost + miningCosts
 end
 
-function RetrieveItemFromStorage(rsBridge, order, depositDirection)
-    local items = rsBridge.listItems()
-    if (order.item == "fuel") then
-        local fuelGotten = 0
-        local itemsForExport = {
-
-        }
-
-        for key, value in pairs(yurtle.fuelItems) do
-            local item = rsBridge.getItem({ name = key })
-            if (item.amount > 0) then
-                local fuelAmount = 0
-                for i = 1, item.amount, 1 do
-                    if (fuelGotten + value <= order.amount) then
-                        fuelAmount = fuelAmount + 1
-                        fuelGotten = fuelGotten + value
-                    else
-                        break
-                    end
-                end
-
-                itemsForExport[#itemsForExport + 1] = {
-                    name = key,
-                    count = fuelAmount
-                }
-            end
-        end
-
-        for i = #itemsForExport, 1, -1 do
-            if rsBridge.getItem({ name = itemsForExport[i].name }).amount > itemsForExport[i].count then
-                itemsForExport[i].count = itemsForExport[i].count + 1
-                fuelGotten = fuelGotten + yurtle.fuelItems[itemsForExport[i].name]
-
-                if fuelGotten >= order.amount then
-                    break
-                end
-            end
-        end
-
-        for i = 1, #itemsForExport, 1 do
-            rsBridge.exportItem(itemsForExport[i], depositDirection)
-        end
-        return true
-    else
-        rsBridge.exportItem({
-            name = order.item,
-            count = order.amount
-        }, depositDirection)
-        return true
-    end
-end
-
-function PutItemInStorage(rsBridge, slot, extractDirection, amount)
-    if (amount == nil) then
-        amount = 9999
-    end
-
-    local detail = turtle.getItemDetail(slot)
-    if detail ~= nil then
-        rsBridge.importItem({
-            name = detail.name,
-            count = math.min(detail.count, amount)
-        }, extractDirection)
-        return true
-    end
-    return false
-end
-
 function DeployMiner(instructions, rsBridge, modem, cost)
-    local success = RetrieveItemFromStorage(rsBridge, {
+    local success = rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
         item = "computercraft:turtle_normal",
         amount = 1
     }, "west")
@@ -501,7 +273,7 @@ function DeployMiner(instructions, rsBridge, modem, cost)
 
     local neededFuel = cost - message
 
-    success = RetrieveItemFromStorage(rsBridge, {
+    success = rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
         item = "fuel",
         amount = neededFuel
     }, "west")
@@ -522,8 +294,6 @@ function DeployMiner(instructions, rsBridge, modem, cost)
     modem.transmit(1, 1, "refuel")
 
     os.pullEvent("modem_message")
-
-
 end
 
 function PrepareDeploy(rsBridge)
@@ -534,10 +304,10 @@ function PrepareDeploy(rsBridge)
     end
     local unequipped = turtle.equipRight()
     if unequipped then
-        PutItemInStorage(rsBridge, slot, "west", 64)
+        rsBridgeUtility.PutItemInStorage(rsBridge, slot, "west", 64)
     end
 
-    RetrieveItemFromStorage(rsBridge, {
+    rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
         name = "computercraft:wireless_modem_advanced",
         amount = 1
     }, "west")
@@ -551,11 +321,11 @@ function PrepareDeploy(rsBridge)
     Position = vector.new(gps.locate())
 
     turtle.equipRight()
-    PutItemInStorage(rsBridge, slot, "west", 64)
+    rsBridgeUtility.PutItemInStorage(rsBridge, slot, "west", 64)
 
     -- get pickaxe
 
-    RetrieveItemFromStorage(rsBridge, {
+    rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
         name = "minecraft:diamond_pickaxe",
         amount = 1
     }, "west")
@@ -572,7 +342,8 @@ end
 
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     shell.run("delete disk/startup")
-    shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
+    shell.run(
+    "wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
 
     local tmp
 
@@ -588,11 +359,11 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     -- plot paths
 
-    local dir = headings[Config["heading"]]
+    local dir = movement.headings[Config["heading"]]
     local pos = vector.new(Position.x, Position.y, Position.z)
 
     if not Config["debug_executePath"] then
-        pos, tmp = move(pos, "forward", dir)
+        pos, tmp = movement.move(pos, "forward", dir)
     end
 
     local travelInstructions
@@ -620,17 +391,13 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     end
 
     for key, value in pairs(instructions) do
-        local builtInstruction = TableConcat(travelInstructions, value.instructions)
-        builtInstruction = TableConcat(builtInstruction, travelInstructionsBack)
+        local builtInstruction = movement.TableConcat(travelInstructions, value.instructions)
+        builtInstruction = movement.TableConcat(builtInstruction, travelInstructionsBack)
 
         DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost)
         break
     end
 end
-
--- Initialize()
--- local testSubs = GetMiningSubdivisions(vector.new(0, 0, 0), vector.new(3, 3, 3), 2, 2)
--- CalculateMiningPaths(vector.new(0, 0, 0), testSubs)
 
 Initialize()
 DeployMiners(vector.new(277, 63, -49), vector.new(272, 59, -54), 2, 2)
