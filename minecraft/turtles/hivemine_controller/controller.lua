@@ -526,6 +526,30 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
         DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost + 15, startPos, startDir)
     end
+
+    for key, value in pairs(instructions) do
+        while true do
+            local event, side = os.pullEvent("peripheral")
+            if side == "top" then
+                local has_block, inspection = turtle.inspect()
+                if inspection.name.match("turtle") then
+                    break
+                end
+            end
+        end
+
+        local empty = yurtle.findItemInInventory("empty")
+        if (empty == nil) then
+            print("no empty slot to suck into")
+            return
+        end
+        while turtle.suckUp() do
+            rsBridgeUtility.PutItemInStorage(rsBridge, empty, "west")
+        end
+
+        turtle.digUp()
+        rsBridgeUtility.PutItemInStorage(rsBridge, empty, "west")
+    end
 end
 
 Initialize()
