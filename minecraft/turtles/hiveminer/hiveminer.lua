@@ -64,7 +64,9 @@ function Init()
 
     local i = 0
 
-    while true do
+    local more = true
+
+    while more do
         modem.transmit(1, 1, "awaiting instructions")
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 
@@ -82,6 +84,7 @@ function Init()
         if not message.more then
             pos = message.pos
             dir = message.dir
+            more = false
         end
 
         i = i + 1
