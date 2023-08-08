@@ -50,11 +50,13 @@ function Main(instructions, pos, dir)
                     return
                 end
             elseif (flags[#flags] == "returning") and (retryTimes <= 60) then
+                i = i - 1
                 retryTimes = retryTimes + 1
                 os.startTimer(1)
                 os.pullEvent("timer")
             else
                 print("Unknown error")
+                print(instructions[i])
                 return
             end
         else
