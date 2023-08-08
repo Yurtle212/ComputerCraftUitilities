@@ -303,6 +303,7 @@ function PrepareDeploy(rsBridge)
         print("No empty space in inventory")
         return false
     end
+    turtle.select(slot)
     local unequipped = turtle.equipRight()
     if unequipped then
         rsBridgeUtility.PutItemInStorage(rsBridge, slot, "west", 64)
@@ -316,14 +317,15 @@ function PrepareDeploy(rsBridge)
     slot = yurtle.findItemInInventory("computercraft:wireless_modem_advanced")
     if (slot == nil) then
         print("No GPS")
+    else
+        turtle.select(slot)
+        turtle.equipRight()
+        Position = vector.new(gps.locate())
+    
+        turtle.equipRight()
+        rsBridgeUtility.PutItemInStorage(rsBridge, slot, "west", 64)
     end
-    turtle.select(slot)
-    turtle.equipRight()
-    Position = vector.new(gps.locate())
-
-    turtle.equipRight()
-    rsBridgeUtility.PutItemInStorage(rsBridge, slot, "west", 64)
-
+    
     -- get pickaxe
 
     rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
