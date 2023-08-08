@@ -309,13 +309,13 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
 
     if (Config["miner_left"] ~= nil) then
         rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
-            Config["miner_left"],
+            item = Config["miner_left"],
             amount = 1
         }, "west")
     
         slot = yurtle.findItemInInventory(Config["miner_left"])
         if (slot == nil) then
-            print("No" .. Config["miner_left"])
+            print("No " .. Config["miner_left"])
         else
             turtle.select(slot)
             turtle.drop()
@@ -325,13 +325,13 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
 
     if (Config["miner_right"] ~= nil) then
         rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
-            Config["miner_right"],
+            item = Config["miner_right"],
             amount = 1
         }, "west")
     
         slot = yurtle.findItemInInventory(Config["miner_right"])
         if (slot == nil) then
-            print("No" .. Config["miner_right"])
+            print("No " .. Config["miner_right"])
         else
             turtle.select(slot)
             turtle.drop()
