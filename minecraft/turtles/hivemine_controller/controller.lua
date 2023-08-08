@@ -339,12 +339,11 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
         end
     end
 
-    modem.transmit(1, 1, equipMessage)
-
     local instructionCount = #instructions
     local maxInstructionsPerMessage = 50
     local instructionIndex = 0
 
+    modem.transmit(1, 1, equipMessage)
     while instructionIndex < instructionCount do
         os.pullEvent("modem_message")
         local subInstructions = {}
