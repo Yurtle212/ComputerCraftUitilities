@@ -68,4 +68,13 @@ local function PutItemInStorage(rsBridge, slot, extractDirection, amount)
     return false
 end
 
-return { RetrieveItemFromStorage = RetrieveItemFromStorage, PutItemInStorage = PutItemInStorage }
+local function getFuelInStorage(rsBridge)
+    local storedFuel = 0
+    for key, value in pairs(yurtle.fuelItems) do
+        local item = rsBridge.getItem({ name = key })
+        storedFuel = storedFuel + (value * item.count)
+    end
+    return storedFuel
+end
+
+return { RetrieveItemFromStorage = RetrieveItemFromStorage, PutItemInStorage = PutItemInStorage, getFuelInStorage = getFuelInStorage }

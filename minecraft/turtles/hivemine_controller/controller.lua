@@ -392,6 +392,20 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         Debug_PerformPath(travelInstructionsBack, true)
     end
 
+    -- check if enough items for everyone
+    local picks = rsBridge.getItem({"minecraft:diamond_pickaxe"})
+    if picks.count < #instructions then
+        print("not enough pickaxes")
+        return
+    end
+    
+    local storedFuel = rsBridgeUtility.getFuelInStorage(rsBridge)
+    print("Stored fuel: " .. storedFuel)
+    if (storedFuel < cost) then
+        print("not enough fuel")
+        return
+    end
+
     for key, value in pairs(instructions) do
         local builtInstruction = movement.TableConcat(travelInstructions, value.instructions)
         builtInstruction = movement.TableConcat(builtInstruction, travelInstructionsBack)
