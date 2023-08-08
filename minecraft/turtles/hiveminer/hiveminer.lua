@@ -32,10 +32,12 @@ function Main(instructions, pos, dir)
     print("Deployed, running instructions.")
 
     for i = 1, #instructions, 1 do
-        if (type(instructions[i]) == "function") then
-            local successful = functiontable[instructions[i]]()
+        local successful
+        if (functiontable[instructions[i]] ~= nil) then
+            successful = functiontable[instructions[i]]()
         else
             flags[#flags + 1] = instructions[i]
+            successful = true
             print(instructions[i])
         end
 
