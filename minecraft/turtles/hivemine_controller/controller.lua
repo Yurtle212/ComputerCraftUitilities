@@ -394,7 +394,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     -- check if enough items for everyone
     local picks = rsBridge.getItem({"minecraft:diamond_pickaxe"})
-    if picks.count < #instructions then
+    if picks.amount < #instructions then
         print("not enough pickaxes")
         return
     end
