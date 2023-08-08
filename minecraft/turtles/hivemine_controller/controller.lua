@@ -541,26 +541,19 @@ end
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     shell.run("delete disk/startup")
     shell.run(
-    "wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
+        "wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
 
     print("\n")
 
     local tmp
+    local rsBridge = peripheral.find("rsBridge")
 
-    if not Config["debug_executePath"] then
+    local modem = peripheral.wrap("bottom")
+    modem.open(1)
 
-        local rsBridge = peripheral.find("rsBridge")
-
-        local modem = peripheral.wrap("bottom")
-        modem.open(1)
-
-        -- get GPS location and then get pickaxe
-        if not PrepareDeploy(rsBridge) then
-            return
-        end
-
-    else
-        Position = vector.new(gps.locate())
+    -- get GPS location and then get pickaxe
+    if not PrepareDeploy(rsBridge) then
+        return
     end
 
     -- plot paths
