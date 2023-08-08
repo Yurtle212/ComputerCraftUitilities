@@ -26,17 +26,17 @@
                 <label class="coordLabel" for="hmInputx1">X1</label>
                 <input class="coordInput" type="number" name="hmInputx1" id="hmInputx1" value="0" />
                 <label class="coordLabel" for="hmInputx1">Y1</label>
-                <input class="coordInput" type="number" name="hmInputx2" id="hmInputx2" value="0" />
+                <input class="coordInput" type="number" name="hmInputy1" id="hmInputy1" value="0" />
                 <label class="coordLabel" for="hmInputx1">Z1</label>
-                <input class="coordInput" type="number" name="hmInputx3" id="hmInputx3" value="0" />
+                <input class="coordInput" type="number" name="hmInputz1" id="hmInputz1" value="0" />
             </div>
             <div class="coordInput">
                 <label class="coordLabel" for="hmInputx1">X2</label>
-                <input class="coordInput" type="number" name="hmInputx1" id="hmInputx1" value="0" />
-                <label class="coordLabel" for="hmInputx1">Y2</label>
                 <input class="coordInput" type="number" name="hmInputx2" id="hmInputx2" value="0" />
+                <label class="coordLabel" for="hmInputx1">Y2</label>
+                <input class="coordInput" type="number" name="hmInputy2" id="hmInputy2" value="0" />
                 <label class="coordLabel" for="hmInputx1">Z2</label>
-                <input class="coordInput" type="number" name="hmInputx3" id="hmInputx3" value="0" />
+                <input class="coordInput" type="number" name="hmInputz2" id="hmInputz2" value="0" />
             </div>
         </div>
 
@@ -45,7 +45,7 @@
         <label class="coordLabel" for="hmsInputz">SubdivisionsZ</label>
         <input class="coordInput" type="number" name="hmsInputz" id="hmsInputz" value="0" />
         
-        <button onclick="sendSignal()">Hivemine</button>
+        <button onclick="sendHivemine()">Hivemine</button>
     </div>
     <script>
         var UUID;
@@ -142,7 +142,7 @@
                     }, 
                     subdivisions: {
                         x: Number(document.querySelector("#hmsInputx").value),
-                        z: Number(document.querySelector("#hmsInputy").value),
+                        z: Number(document.querySelector("#hmsInputz").value),
                     }
                 },
                 "timestamp": Date.now()

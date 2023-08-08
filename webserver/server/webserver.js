@@ -86,8 +86,15 @@ app.ws('/:channel', function (ws, req) {
                 if (msg.type == "signal") {
                     sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);
                 }
+                else {
+                    sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);
+                }
             } else {
                 if (msg.type == "ack") {
+                    msg.data.UUID = UUID;
+                    msg.timestamp = Date.now();
+                    sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);
+                } else {
                     msg.data.UUID = UUID;
                     msg.timestamp = Date.now();
                     sendMsgToAll(channel, ["ccConnections", "webConnections"], msg);

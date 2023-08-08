@@ -74,7 +74,7 @@ function Initialize()
                     }
 
                     WS.close()
-                    DeployMiners(pos1, pos2, signal.data.subdivisions.x, signal.data.subdivisions.y)
+                    DeployMiners(pos1, pos2, signal.data.subdivisions.x, signal.data.subdivisions.z)
 
                     if next(params) == nil then
                         WS = assert(http.websocket("wss://yurtle.net/cc/default"))
