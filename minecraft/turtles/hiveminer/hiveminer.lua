@@ -36,7 +36,7 @@ function Main(instructions, pos, dir)
 
     for i = 1, #instructions, 1 do
         local successful
-        print(instructions[i])
+        -- print(instructions[i])
         if (functiontable[instructions[i]] ~= nil) then
             if flags[#flags] ~= "digplot" and string.match(instructions[i], "dig") then
                 for c = 1, 10, 1 do
