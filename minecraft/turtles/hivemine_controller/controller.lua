@@ -131,6 +131,8 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
     for key, value in pairs(subdivisions) do
         value.instructions = {}
 
+        value.instructions[#value.instructions+1] = "digsite"
+
         local tmpInstructions
 
         local dir = sDir
@@ -150,6 +152,8 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+
+        value.instructions[#value.instructions+1] = "starting dig"
 
         local positiveX = true
         local positiveZ = true
@@ -214,6 +218,8 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         dir, tmpInstructions = movement.RotateTo(dir, sDir)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+
+        value.instructions[#value.instructions+1] = "returning"
 
         value.cost = 0
 
