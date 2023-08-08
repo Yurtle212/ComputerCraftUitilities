@@ -11,7 +11,7 @@ yurtle.refuel()
 
 modem.transmit(1, 1, "refueled")
 
-local event, sender, message, protocol = os.pullEvent("modem_message")
+local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 
 if (message.equipLeft ~= nil) then
     local slot = yurtle.findItemInInventory(message.equipLeft)

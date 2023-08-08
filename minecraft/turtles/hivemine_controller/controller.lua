@@ -276,7 +276,7 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
     os.pullEvent("peripheral")
     peripheral.wrap("front").turnOn()
 
-    local event, sender, message, protocol = os.pullEvent("modem_message")
+    local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 
     local neededFuel = cost - message
 
