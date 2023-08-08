@@ -405,6 +405,8 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     shell.run("delete disk/startup")
     shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
 
+    print("\n")
+
     local tmp
 
     local rsBridge = peripheral.find("rsBridge")

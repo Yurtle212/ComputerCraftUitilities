@@ -61,9 +61,12 @@ function Init()
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 
     for key, value in pairs(message) do
+        print("\n")
         print(key)
         print(value)
-        print(#value)
+        if (type(value) == "table") then
+            print(#value)
+        end
     end
 
     print(#message.moveInstructions .. " instructions")
