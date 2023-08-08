@@ -344,9 +344,9 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
     os.pullEvent("modem_message")
 
     local instructionMessage = {
-        instructions = instructions,
-        pos = pos,
-        dir = dir
+        moveInstructions = instructions,
+        position = pos,
+        direction = dir
     }
 
     modem.transmit(1, 1, instructionMessage)
