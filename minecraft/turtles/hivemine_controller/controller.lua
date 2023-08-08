@@ -422,6 +422,9 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local dir = movement.headings[Config["heading"]]
     local pos = vector.new(Position.x, Position.y, Position.z)
 
+    print("Position: " .. pos.x .. ", " .. pos.y .. ", " .. pos.z)
+    print("Direction: " .. Config["heading"])
+
     if not Config["debug_executePath"] then
         pos, tmp = movement.move(pos, "forward", dir)
     end
