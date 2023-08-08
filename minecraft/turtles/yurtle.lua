@@ -38,7 +38,7 @@ local function findItemInInventory(itemName)
         if (item ~= nil) then
             if (itemName == "fuel") then
                 for key, value in pairs(fuelItems) do
-                    if key == itemName then
+                    if key == item.name then
                         return i
                     end
                 end
