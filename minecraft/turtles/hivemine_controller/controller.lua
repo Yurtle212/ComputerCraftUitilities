@@ -436,7 +436,7 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
 
                 itemsForExport[#itemsForExport+1] = {
                     name = key,
-                    count = fuelToTake
+                    count = fuelAmount
                 }
             end
         end
