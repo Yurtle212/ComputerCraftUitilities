@@ -350,6 +350,9 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
         ["down"] = turtle.down,
         ["turnLeft"] = turtle.turnLeft,
         ["turnRight"] = turtle.turnRight,
+        ["dig"] = turtle.dig,
+        ["digUp"] = turtle.digUp,
+        ["digDown"] = turtle.digDown,
     }
 
     modem.transmit(1, 1, equipMessage)
@@ -391,6 +394,8 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
 
         modem.transmit(1, 1, instructionMessage)
     end
+
+    print("sent " .. instructionIndex .. " instructions")
 
     os.pullEvent("peripheral_detach")
     print("deployed successfully")

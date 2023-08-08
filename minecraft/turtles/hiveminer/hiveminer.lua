@@ -23,6 +23,9 @@ local functiontable = {
     ["down"] = turtle.down,
     ["turnLeft"] = turtle.turnLeft,
     ["turnRight"] = turtle.turnRight,
+    ["dig"] = turtle.dig,
+    ["digUp"] = turtle.digUp,
+    ["digDown"] = turtle.digDown,
 }
 
 function Main(instructions, pos, dir)
