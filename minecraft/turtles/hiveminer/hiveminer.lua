@@ -84,12 +84,6 @@ function Main(instructions, pos, dir)
                     print("Out of fuel")
                     return
                 end
-            elseif (flags[#flags] == "returning") and (retryTimes <= 60) then
-                print("backed up")
-                i = i - 2
-                retryTimes = retryTimes + 1
-                os.startTimer(1)
-                os.pullEvent("timer")
             elseif turtle.inspect() and (retryTimes <= 60) then
                 local has_block, data = turtle.inspect()
                 if data.name ~= "minecraft:bedrock" then
