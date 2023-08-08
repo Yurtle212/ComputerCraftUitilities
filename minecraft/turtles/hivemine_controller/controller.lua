@@ -551,6 +551,10 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         os.pullEvent("redstone")
         redstone.setOutput("top", false)
 
+        while turtle.suckUp() do
+            rsBridgeUtility.PutItemInStorage(rsBridge, empty, "west")
+        end
+
         turtle.digUp()
         rsBridgeUtility.PutItemInStorage(rsBridge, empty, "west")
     end
