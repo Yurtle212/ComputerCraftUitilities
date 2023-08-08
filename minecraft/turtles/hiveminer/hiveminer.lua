@@ -86,6 +86,7 @@ function Init()
 
         i = i + 1
         print("packet " .. i)
+        print(#fullInstructions)
     end
 
     print(#message.moveInstructions .. " instructions")
