@@ -588,6 +588,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         Debug_PerformPath(travelInstructions, true)
         Debug_PerformPath(instructions, false)
         Debug_PerformPath(travelInstructionsBack, true)
+        return
     end
 
     -- check if enough items for everyone
