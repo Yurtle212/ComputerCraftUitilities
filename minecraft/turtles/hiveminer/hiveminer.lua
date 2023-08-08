@@ -43,11 +43,11 @@ function Main(instructions, pos, dir)
                     local inspection
                     local has_block
 
-                    if instructions[c] == "dig" then
+                    if instructions[i] == "dig" then
                         has_block, inspection = turtle.inspect()
-                    elseif instructions[c] == "digUp" then
+                    elseif instructions[i] == "digUp" then
                         has_block, inspection = turtle.inspectUp()
-                    elseif instructions[c] == "digDown" then
+                    elseif instructions[i] == "digDown" then
                         has_block, inspection = turtle.inspectDown()
                     end
 
