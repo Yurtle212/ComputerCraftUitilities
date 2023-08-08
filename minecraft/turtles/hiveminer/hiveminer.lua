@@ -1,4 +1,5 @@
 local yurtle = require "yurtle"
+local movement = require "movement"
 
 local itemValues = {
     ["base"] = 50,
@@ -25,10 +26,10 @@ function Main(instructions, pos, dir)
         if (type(instructions[i]) == "function") then
             local successful = instructions[i]()
         else
-            flags[#flags+1] = instructions[i]
+            flags[#flags + 1] = instructions[i]
             print(instructions[i])
         end
-        
+
         if not successful then
             local fuel = turtle.getFuelLevel()
             if (fuel <= 0) then
@@ -57,21 +58,39 @@ function Init()
     local modem = peripheral.wrap("front")
     modem.open(1)
 
-    modem.transmit(1, 1, "awaiting instructions")
-    local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+    local fullInstructions = {}
+    local pos
+    local dir
 
-    for key, value in pairs(message) do
-        print("\n")
-        print(key)
-        print(value)
-        if (type(value) == "table") then
-            print(#value)
+    local i = 0
+
+    while true do
+        modem.transmit(1, 1, "awaiting instructions")
+        local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+
+        -- for key, value in pairs(message) do
+        --     print("\n")
+        --     print(key)
+        --     print(value)
+        --     if (type(value) == "table") then
+        --         print(#value)
+        --     end
+        -- end
+
+        fullInstructions = movement.TableConcat(fullInstructions, message.moveInstructions)
+
+        if not message.more then
+            pos = message.pos
+            dir = message.dir
         end
+
+        i = i + 1
+        print("packet " .. i)
     end
 
     print(#message.moveInstructions .. " instructions")
 
-    Main(message.moveInstructions, message.position, message.direction)
+    Main(fullInstructions, message.position, message.direction)
 end
 
 Init()

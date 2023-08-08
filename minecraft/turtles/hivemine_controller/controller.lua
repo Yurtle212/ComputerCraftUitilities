@@ -341,15 +341,42 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
 
     modem.transmit(1, 1, equipMessage)
 
-    os.pullEvent("modem_message")
+    local instructionCount = #instructions
+    local maxInstructionsPerMessage = 50
+    local instructionIndex = 0
 
-    local instructionMessage = {
-        moveInstructions = instructions,
-        position = pos,
-        direction = dir
-    }
+    while instructionIndex < instructionCount do
+        os.pullEvent("modem_message")
+        local subInstructions = {}
 
-    modem.transmit(1, 1, instructionMessage)
+        for i = instructionIndex, instructionIndex+maxInstructionsPerMessage, 1 do
+            subInstructions[#subInstructions+1] = instructions[instructionIndex]
+
+            instructionIndex = instructionIndex + 1
+
+            if (instructionIndex > instructionCount) then
+                break
+            end
+        end
+
+        local instructionMessage
+
+        if instructionIndex < instructionCount then
+            instructionMessage = {
+                moveInstructions = subInstructions,
+                position = pos,
+                direction = dir,
+                more = false
+            }
+        else
+            instructionMessage = {
+                moveInstructions = subInstructions,
+                more = true
+            }
+        end
+
+        modem.transmit(1, 1, instructionMessage)
+    end
 
     os.pullEvent("peripheral_detach")
     print("deployed successfully")
