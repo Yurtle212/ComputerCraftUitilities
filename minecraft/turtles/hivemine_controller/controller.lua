@@ -540,7 +540,7 @@ function PrepareDeploy(rsBridge)
     RetrieveItemFromStorage(rsBridge, {
         name = "computercraft:wireless_modem_advanced",
         amount = 1
-    })
+    }, "west")
 
     slot = yurtle.findItemInInventory("computercraft:wireless_modem_advanced")
     if (slot == nil) then
@@ -558,7 +558,7 @@ function PrepareDeploy(rsBridge)
     RetrieveItemFromStorage(rsBridge, {
         name = "minecraft:diamond_pickaxe",
         amount = 1
-    })
+    }, "west")
 
     slot = yurtle.findItemInInventory("minecraft:diamond_pickaxe")
     if (slot == nil) then
