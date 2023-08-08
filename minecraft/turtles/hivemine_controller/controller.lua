@@ -171,8 +171,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
             subdivisions[index].startPos = subdivisions[index].startPos:add(pos1)
             subdivisions[index].endPos = subdivisions[index].endPos:add(pos1)
 
-            -- print(json.encode(subdivisions[index]))
-            print(textutils.tabulate(subdivisions[index]))
+            print(json.encode(subdivisions[index]))
         end
     end
     return subdivisions
