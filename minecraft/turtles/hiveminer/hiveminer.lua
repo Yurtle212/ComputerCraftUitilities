@@ -111,13 +111,13 @@ function Main(instructions, pos, dir)
     turtle.select(2)
     turtle.equipRight()
 
-    redstone.setOutput("bottom", 1)
+    redstone.setOutput("bottom", true)
 
     print("Finished, shutting down.")
 end
 
 function Init()
-    redstone.setOutput("bottom", 0)
+    redstone.setOutput("bottom", false)
 
     local modem = peripheral.wrap("front")
     modem.open(1)
