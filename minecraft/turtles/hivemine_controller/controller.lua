@@ -539,14 +539,18 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     local tmp
 
-    local rsBridge = peripheral.find("rsBridge")
+    if not Config["debug_executePath"] then
 
-    local modem = peripheral.wrap("bottom")
-    modem.open(1)
+        local rsBridge = peripheral.find("rsBridge")
 
-    -- get GPS location and then get pickaxe
-    if not PrepareDeploy(rsBridge) then
-        return
+        local modem = peripheral.wrap("bottom")
+        modem.open(1)
+
+        -- get GPS location and then get pickaxe
+        if not PrepareDeploy(rsBridge) then
+            return
+        end
+
     end
 
     -- plot paths
