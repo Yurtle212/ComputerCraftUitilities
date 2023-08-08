@@ -59,7 +59,12 @@ function Init()
 
     modem.transmit(1, 1, "awaiting instructions")
     local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
-    print(#message)
+
+    for key, value in pairs(message) do
+        print(key)
+        print(value)
+        print(#value)
+    end
 
     print(#message.moveInstructions .. " instructions")
 
