@@ -1,28 +1,15 @@
-local yurtle = require("yurtle")
-
-local params = {...}
-
-local data = {
-    position = vector.new(0,0,0)
-}
-
--- Main Functions
-
-function Main()
-    print("Main")
-end
-
-function PlanRoute()
-    return 100
-end
-
-function Setup()
-    print("Setup")
+function Main(instructions, pos, dir)
     
-    data.position.x, data.position.y, data.position.z = gps.locate()
-    
-
-    Main()
 end
 
-Setup()
+function Init()
+    local modem = peripheral.wrap("front")
+    modem.open(1)
+
+    modem.transmit(1, 1, "awaiting instructions")
+    local event, sender, message, protocol = os.pullEvent("modem_message")
+
+    main(message.instructions, message.pos, message.dir)
+end
+
+Init()

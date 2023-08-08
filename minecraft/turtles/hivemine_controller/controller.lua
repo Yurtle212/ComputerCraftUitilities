@@ -254,7 +254,7 @@ function CalculateCosts(travelCost, bots)
     return travelCost + miningCosts
 end
 
-function DeployMiner(instructions, rsBridge, modem, cost)
+function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
     local success = rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
         item = "computercraft:turtle_normal",
         amount = 1
@@ -295,6 +295,58 @@ function DeployMiner(instructions, rsBridge, modem, cost)
     modem.transmit(1, 1, "refuel")
 
     os.pullEvent("modem_message")
+
+    local equipMessage = {
+        equipLeft = nil,
+        equipRight = nil,
+    }
+
+    if (Config["miner_left"] ~= nil) then
+        rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
+            Config["miner_left"],
+            amount = 1
+        }, "west")
+    
+        slot = yurtle.findItemInInventory(Config["miner_left"])
+        if (slot == nil) then
+            print("No" .. Config["miner_left"])
+        else
+            turtle.select(slot)
+            turtle.drop()
+            equipMessage.equipLeft = Config["miner_left"]
+        end
+    end
+
+    if (Config["miner_right"] ~= nil) then
+        rsBridgeUtility.RetrieveItemFromStorage(rsBridge, {
+            Config["miner_right"],
+            amount = 1
+        }, "west")
+    
+        slot = yurtle.findItemInInventory(Config["miner_right"])
+        if (slot == nil) then
+            print("No" .. Config["miner_right"])
+        else
+            turtle.select(slot)
+            turtle.drop()
+            equipMessage.equipRight = Config["miner_right"]
+        end
+    end
+
+    modem.transmit(1, 1, equipMessage)
+
+    os.pullEvent("modem_message")
+
+    local instructionMessage = {
+        instructions = instructions,
+        pos = pos,
+        dir = dir
+    }
+
+    modem.transmit(1, 1, instructionMessage)
+
+    os.pullEvent("peripheral_detach")
+    print("deployed successfully")
 end
 
 function PrepareDeploy(rsBridge)
@@ -368,6 +420,9 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         pos, tmp = movement.move(pos, "forward", dir)
     end
 
+    local startDir = dir
+    local startPos = vector.new(pos.x, pos.y, pos.z)
+
     local travelInstructions
     local travelInstructionsBack
 
@@ -410,7 +465,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         local builtInstruction = movement.TableConcat(travelInstructions, value.instructions)
         builtInstruction = movement.TableConcat(builtInstruction, travelInstructionsBack)
 
-        DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost)
+        DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost, startPos, startDir)
         break
     end
 end

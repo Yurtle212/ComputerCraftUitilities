@@ -1,6 +1,8 @@
 {
-    "NOGPS_position": [296,64,-73],
+    "NOGPS_position": [316,64,-59],
     "heading": "west",
     "travelHeight": 100,
-    "debug_executePath": false
+    "debug_executePath": false,
+    "miner_left": "minecraft:diamond_pickaxe",
+    "miner_right": null
 }

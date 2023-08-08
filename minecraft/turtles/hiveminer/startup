@@ -18,4 +18,7 @@ shell.run("wget https://pastebin.com/raw/4nRg9CHU json")
 shell.run("delete deploy.lua")
 shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/deploy.lua")
 
+shell.run("delete movement.lua")
+shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/movement.lua")
+
 shell.run("deploy")

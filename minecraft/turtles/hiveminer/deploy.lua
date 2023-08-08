@@ -29,4 +29,4 @@ if (message.equipRight ~= nil) then
     end
 end
 
-modem.transmit(1, 1, "equipped")
+shell.run("hiveminer")
