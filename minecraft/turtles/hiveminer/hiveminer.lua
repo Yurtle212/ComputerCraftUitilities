@@ -105,10 +105,20 @@ function Main(instructions, pos, dir)
         end
     end
 
+    os.pullEvent("redstone")
+    turtle.select(1)
+    turtle.equipLeft()
+    turtle.select(2)
+    turtle.equipRight()
+
+    redstone.setOutput("bottom", 1)
+
     print("Finished, shutting down.")
 end
 
 function Init()
+    redstone.setOutput("bottom", 0)
+
     local modem = peripheral.wrap("front")
     modem.open(1)
 
