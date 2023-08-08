@@ -73,6 +73,8 @@ function Initialize()
                         timestamp = os.time()
                     }
 
+                    WS.send(json.encode(ack))
+
                     WS.close()
                     DeployMiners(pos1, pos2, signal.data.subdivisions.x, signal.data.subdivisions.z)
 
