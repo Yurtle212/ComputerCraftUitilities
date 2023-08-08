@@ -1,4 +1,3 @@
-local yurtle = require "yurtle"
 if (fs.exists("startup")) then
     print("Controller Turtle")
     shell.run("startup")
@@ -15,6 +14,8 @@ shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilit
 
 shell.run("delete json")
 shell.run("wget https://pastebin.com/raw/4nRg9CHU json")
+
+local yurtle = require "yurtle"
 
 local modem = peripheral.wrap("front")
 modem.open(1)
