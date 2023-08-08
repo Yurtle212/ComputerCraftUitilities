@@ -73,10 +73,14 @@ local function move(pos, way, dir, dig)
 end
 
 local function TableConcat(t1, t2)
-    for i = 1, #t2 do
-        t1[#t1 + 1] = t2[i]
+    local t3 = {}
+    for i = 1, #t1, 1 do
+        t3[#t3+1] = t1[i]
     end
-    return t1
+    for i = 1, #t2 do
+        t3[#t3+1] = t2[i]
+    end
+    return t3
 end
 
 local function RotateTo(dir, dest)

@@ -257,7 +257,7 @@ function CalculateCosts(travelCost, bots)
         miningCosts = miningCosts + value.cost
     end
 
-    return travelCost + miningCosts
+    return travelCost + miningCosts + (#bots * 15) -- a little extra buffer
 end
 
 function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
@@ -485,7 +485,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     local travelCost = 0
 
-    dir, tmp, travelInstructions = CalculateTravelPath(Position, pos1, dir, Config["travelHeight"])
+    dir, tmp, travelInstructions = CalculateTravelPath(pos, pos1, dir, Config["travelHeight"])
     travelCost = travelCost + tmp
     dir, tmp, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir,
         Config["travelHeight"], false)
@@ -524,7 +524,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         local builtInstruction = movement.TableConcat(travelInstructions, value.instructions)
         builtInstruction = movement.TableConcat(builtInstruction, travelInstructionsBack)
 
-        DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost, startPos, startDir)
+        DeployMiner(builtInstruction, rsBridge, modem, value.cost + travelCost + 15, startPos, startDir)
     end
 end
 
