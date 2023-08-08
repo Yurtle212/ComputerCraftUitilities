@@ -38,20 +38,21 @@ function Main(instructions, pos, dir)
         local successful
         if (functiontable[instructions[i]] ~= nil) then
             if flags[#flags] ~= "digplot" and string.match(instructions[i], "dig") then
-                for i = 1, 10, 1 do
+                for c = 1, 10, 1 do
                     local inspection
                     local has_block
 
-                    if instructions[i] == "dig" then
+                    if instructions[c] == "dig" then
                         has_block, inspection = turtle.inspect()
-                    elseif instructions[i] == "digUp" then
+                    elseif instructions[c] == "digUp" then
                         has_block, inspection = turtle.inspectUp()
-                    elseif instructions[i] == "digDown" then
+                    elseif instructions[c] == "digDown" then
                         has_block, inspection = turtle.inspectDown()
                     end
 
                     if has_block then
                         if inspection.name.match("turtle") then
+                            print("No cannibalism")
                             os.startTimer(1)
                             os.pullEvent()
                         else
