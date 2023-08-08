@@ -360,7 +360,7 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
 
         local instructionMessage
 
-        if instructionIndex < instructionCount then
+        if instructionIndex >= instructionCount then
             instructionMessage = {
                 moveInstructions = subInstructions,
                 position = pos,
