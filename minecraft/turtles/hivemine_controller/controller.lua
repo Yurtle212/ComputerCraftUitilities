@@ -93,7 +93,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
             subdivisions[index].startPos = subdivisions[index].startPos:add(pos1)
             subdivisions[index].endPos = subdivisions[index].endPos:add(pos1)
 
-            print(json.encode(subdivisions[index]))
+            -- print(json.encode(subdivisions[index]))
         end
     end
     return subdivisions
@@ -441,6 +441,8 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     travelCost = travelCost + tmp
 
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
+    print(#subdivisions .. " bots")
+
     local instructions = CalculateMiningPaths(pos1, subdivisions, dir)
     instructions = reverse(instructions)
 
