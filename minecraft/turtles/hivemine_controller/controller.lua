@@ -531,7 +531,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         while true do
             local event, side = os.pullEvent("peripheral")
             if side == "top" then
-                local has_block, inspection = turtle.inspect()
+                local has_block, inspection = turtle.inspectUp()
                 if inspection.name.match("turtle") then
                     break
                 end
@@ -553,4 +553,4 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 end
 
 Initialize()
-DeployMiners(vector.new(277, 63, -49), vector.new(272, 59, -54), 2, 2)
+DeployMiners(vector.new(277, 61, -49), vector.new(272, 57, -54), 2, 2)

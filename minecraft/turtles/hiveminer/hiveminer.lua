@@ -38,7 +38,6 @@ function Main(instructions, pos, dir)
         local successful
         if (functiontable[instructions[i]] ~= nil) then
             if flags[#flags] ~= "digplot" and string.match(instructions[i], "dig") then
-                print("cannibalism check")
                 for c = 1, 10, 1 do
                     local inspection
                     local has_block
@@ -85,6 +84,7 @@ function Main(instructions, pos, dir)
                     return
                 end
             elseif (flags[#flags] == "returning") and (retryTimes <= 60) then
+                print("backed up")
                 i = i - 1
                 retryTimes = retryTimes + 1
                 os.startTimer(1)
