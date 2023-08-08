@@ -37,6 +37,27 @@ function Main(instructions, pos, dir)
     for i = 1, #instructions, 1 do
         local successful
         if (functiontable[instructions[i]] ~= nil) then
+            if flags[#flags] ~= "digplot" and string.match(instructions[i], "dig") then
+                for i = 1, 10, 1 do
+                    local inspection
+                    local has_block
+                    if instructions[i] == "dig" then
+                        has_block, inspection = turtle.inspect()
+                    elseif instructions[i] == "digUp" then
+                        has_block, inspection = turtle.inspect()
+                    elseif instructions[i] == "digDown" then
+                        has_block, inspection = turtle.inspect()
+                    end
+
+                    if has_block and inspection.name.match("computercraft") then
+                        os.startTimer(1)
+                        os.pullEvent()
+                    else
+                        break
+                    end
+                end
+            end
+
             successful = functiontable[instructions[i]]()
             
             if string.match(instructions[i], "dig") then

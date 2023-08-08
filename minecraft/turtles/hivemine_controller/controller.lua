@@ -153,7 +153,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-        value.instructions[#value.instructions+1] = "starting dig"
+        value.instructions[#value.instructions+1] = "digplot"
 
         local positiveX = true
         local positiveZ = true
