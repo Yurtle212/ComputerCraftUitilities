@@ -45,6 +45,8 @@ local function findItemInInventory(itemName)
             elseif (item.name) == itemName then
                 return i
             end
+        elseif itemName == "empty" then
+            return i
         end
     end
     return nil

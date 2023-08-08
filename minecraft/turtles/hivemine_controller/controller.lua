@@ -403,7 +403,7 @@ function CalculateCosts(travelCost, bots)
 
     -- local travelCost = (Config["travelHeight"] - SpawnLoc.y) * 4      -- to and from travel height (both there and back)
     -- travelCost = travelCost + (travelDest:sub(SpawnLoc):length() * 2) -- to and from destination
-    travelCost = travelCost * #bots                                   -- times the number of bots
+    travelCost = travelCost * #bots -- times the number of bots
 
     local miningCosts = 0
     for key, value in pairs(bots) do
@@ -420,9 +420,9 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
         local itemsForExport = {
 
         }
-        
+
         for key, value in pairs(yurtle.fuelItems) do
-            local item = rsBridge.getItem({name=key})
+            local item = rsBridge.getItem({ name = key })
             if (item.amount > 0) then
                 local fuelAmount = 0
                 for i = 1, item.amount, 1 do
@@ -434,7 +434,7 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
                     end
                 end
 
-                itemsForExport[#itemsForExport+1] = {
+                itemsForExport[#itemsForExport + 1] = {
                     name = key,
                     count = fuelAmount
                 }
@@ -442,7 +442,7 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
         end
 
         for i = #itemsForExport, 1, -1 do
-            if rsBridge.getItem({name = itemsForExport[i].name}).amount > itemsForExport[i].count then
+            if rsBridge.getItem({ name = itemsForExport[i].name }).amount > itemsForExport[i].count then
                 itemsForExport[i].count = itemsForExport[i].count + 1
                 fuelGotten = fuelGotten + yurtle.fuelItems[itemsForExport[i].name]
 
@@ -463,6 +463,22 @@ function RetrieveItemFromStorage(rsBridge, order, depositDirection)
         }, depositDirection)
         return true
     end
+end
+
+function PutItemInStorage(rsBridge, slot, extractDirection, amount)
+    if (amount == nil) then
+        amount = 9999
+    end
+
+    local detail = turtle.getItemDetail(slot)
+    if detail ~= nil then
+        rsBridge.importItem({
+            name = detail.name,
+            count = math.min(detail.count, amount)
+        }, extractDirection)
+        return true
+    end
+    return false
 end
 
 function DeployMiner(instructions, rsBridge, modem, cost)
@@ -502,7 +518,54 @@ function DeployMiner(instructions, rsBridge, modem, cost)
         turtle.select(slot)
         turtle.drop()
     end
-    
+
+    modem.transmit(1, 1, "refuel")
+
+    os.pullEvent("modem_message")
+end
+
+function PrepareDeploy(rsBridge)
+    local slot = findItemInInventory("empty")
+    if (slot == nil) then
+        print("No empty space in inventory")
+        return false
+    end
+    local unequipped = turtle.equipRight()
+    if unequipped then
+        PutItemInStorage(rsBridge, slot, "west", 64)
+    end
+
+    RetrieveItemFromStorage(rsBridge, {
+        name = "computercraft:wireless_modem_advanced",
+        amount = 1
+    })
+
+    slot = yurtle.findItemInInventory("computercraft:wireless_modem_advanced")
+    if (slot == nil) then
+        print("No GPS")
+    end
+    turtle.select(slot)
+    turtle.equipRight()
+    Position = vector.new(gps.locate())
+
+    turtle.equipRight()
+    PutItemInStorage(rsBridge, slot, "west", 64)
+
+    -- get pickaxe
+
+    RetrieveItemFromStorage(rsBridge, {
+        name = "minecraft:diamond_pickaxe",
+        amount = 1
+    })
+
+    slot = yurtle.findItemInInventory("minecraft:diamond_pickaxe")
+    if (slot == nil) then
+        print("No Pickaxe")
+        return false
+    end
+    turtle.select(slot)
+    turtle.equipRight()
+    return true
 end
 
 function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
@@ -510,6 +573,18 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     shell.run("wget https://raw.githubusercontent.com/Yurtle212/ComputerCraftUitilities/main/minecraft/turtles/hiveminer/startup disk/startup")
 
     local tmp
+
+    local rsBridge = peripheral.find("rsBridge")
+
+    local modem = peripheral.wrap("bottom")
+    modem.open(1)
+
+    -- get GPS location and then get pickaxe
+    if not PrepareDeploy(rsBridge) then
+        return
+    end
+
+    -- plot paths
 
     local dir = headings[Config["heading"]]
     local pos = vector.new(Position.x, Position.y, Position.z)
@@ -541,11 +616,6 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
         Debug_PerformPath(instructions, false)
         Debug_PerformPath(travelInstructionsBack, true)
     end
-
-    local rsBridge = peripheral.find("rsBridge")
-    
-    local modem = peripheral.wrap("bottom")
-    modem.open(1)
 
     for key, value in pairs(instructions) do
         local builtInstruction = TableConcat(travelInstructions, value.instructions)
