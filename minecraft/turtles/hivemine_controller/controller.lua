@@ -551,6 +551,8 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
             return
         end
 
+    else
+        Position = gps.locate()
     end
 
     -- plot paths
