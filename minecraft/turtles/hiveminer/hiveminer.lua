@@ -81,19 +81,19 @@ function Main(instructions, pos, dir)
             if (fuel <= 0) then
                 yurtle.refuel()
                 if (fuel <= 0) then
-                    print("Out of fuel X(")
+                    print("Out of fuel")
                     return
                 end
             elseif (flags[#flags] == "returning") and (retryTimes <= 60) then
                 print("backed up")
-                i = i - 1
+                i = i - 2
                 retryTimes = retryTimes + 1
                 os.startTimer(1)
                 os.pullEvent("timer")
             elseif turtle.inspect() and (retryTimes <= 60) then
                 local has_block, data = turtle.inspect()
                 if data.name ~= "minecraft:bedrock" then
-                    i = i - 2
+                    i = i - 3
                     retryTimes = retryTimes + 1
                 end
             else
