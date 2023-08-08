@@ -38,6 +38,10 @@ function Main(instructions, pos, dir)
         local successful
         if (functiontable[instructions[i]] ~= nil) then
             successful = functiontable[instructions[i]]()
+            
+            if string.match(instructions[i], "dig") then
+                successful = true
+            end
         else
             flags[#flags + 1] = instructions[i]
             successful = true
