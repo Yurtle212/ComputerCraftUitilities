@@ -362,12 +362,17 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
 
         for i = instructionIndex, instructionIndex+maxInstructionsPerMessage, 1 do
             -- subInstructions[#subInstructions+1] = instructions[instructionIndex]
-            for key, value in pairs(functiontable) do
-                if value == instructions[instructionIndex] then
-                    subInstructions[#subInstructions+1] = key
-                    break
+            if (type(instructions[instructionIndex]) == "function") then
+                for key, value in pairs(functiontable) do
+                    if value == instructions[instructionIndex] then
+                        subInstructions[#subInstructions+1] = key
+                        break
+                    end
                 end
+            else
+                subInstructions[#subInstructions+1] = instructions[instructionIndex]
             end
+            
             
             instructionIndex = instructionIndex + 1
 
