@@ -315,10 +315,10 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         -- return to start location
 
-        dir, tmpInstructions = movement.RotateTo(dir, sDir)
+        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, startPos)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, startPos)
+        dir, tmpInstructions = movement.RotateTo(dir, sDir)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
         value.instructions[#value.instructions + 1] = "returning"
