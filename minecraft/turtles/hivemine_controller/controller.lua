@@ -154,12 +154,12 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
                 subdivisions[index].endPos.z = -subdivisions[index].endPos.z
             end
 
-            if (x > 1) then
-                subdivisions[index].startPos.x = subdivisions[index].startPos.x + 1
+            if (x < subdivisionsX) then
+                subdivisions[index].endPos.x = subdivisions[index].endPos.x - 1
             end
 
-            if (z > 1) then
-                subdivisions[index].startPos.z = subdivisions[index].startPos.z + 1
+            if (z < subdivisionsZ) then
+                subdivisions[index].endPos.z = subdivisions[index].endPos.z - 1
             end
 
             subdivisions[index].startPos = subdivisions[index].startPos:add(pos1)
