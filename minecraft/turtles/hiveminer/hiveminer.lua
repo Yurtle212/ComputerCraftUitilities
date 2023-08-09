@@ -44,6 +44,7 @@ function Main(instructions, pos, dir)
         -- print(instructions[i])
         if (functiontable[instructions[i]] ~= nil) then
             if string.match(instructions[i], "dig") then
+                
                 for c = 1, 10, 1 do
                     local inspection
                     local has_block
@@ -90,7 +91,13 @@ function Main(instructions, pos, dir)
                             return
                         else
                             print("digging extra block")
-                            functiontable[("dig" .. firstToUpper(instructions[i]))]()
+                            if instructions[i] == "forward" then
+                                has_block, inspection = turtle.dig()
+                            elseif instructions[i] == "up" then
+                                has_block, inspection = turtle.digUp()
+                            elseif instructions[i] == "down" then
+                                has_block, inspection = turtle.digDown()
+                            end
                         end
                     else
                         break
