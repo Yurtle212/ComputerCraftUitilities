@@ -143,6 +143,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     local subdivisions = {}
     for x = 1, subdivisionsX, 1 do
+        sleep(0)
         for z = 1, subdivisionsZ, 1 do
             local index = ((x - 1) * subdivisionsZ) + z
 
@@ -271,6 +272,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         for y = 1, yDist + 1, 1 do
             for z = 1, zDist, 1 do
+                sleep(0)
                 for x = 1, xDist, 1 do
                     pos, tmpInstructions = movement.move(pos, "forward", dir)
                     value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
@@ -523,6 +525,7 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
         end
 
         modem.transmit(1, 1, instructionMessage)
+        sleep(0)
     end
 
     -- print("sent " .. instructionIndex .. " instructions")
@@ -617,6 +620,7 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     print(#subdivisions .. " bots")
+    sleep(0)
 
     dir, tmp, travelInstructions = CalculateTravelPath(pos, pos1, dir, Config["travelHeight"], true)
     travelCost = travelCost + tmp
