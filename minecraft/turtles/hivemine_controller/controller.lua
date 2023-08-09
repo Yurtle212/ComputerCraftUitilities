@@ -128,9 +128,9 @@ local fuelConsumingFunctions = {
 
 local function signum(number) -- counts 0 as positive
     if number < 0 then
-       return -1
+        return -1
     else
-       return 1
+        return 1
     end
 end
 
@@ -162,16 +162,28 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
                 subdivisions[index].endPos.z = -subdivisions[index].endPos.z
             end
 
-            if (x < subdivisionsX) then
-                subdivisions[index].endPos.x = subdivisions[index].endPos.x - signum(subdivisions[index].endPos.x)
-            end
+            subdivisions[index].endPos.x = subdivisions[index].endPos.x - signum(subdivisions[index].endPos.x)
 
-            if (z < subdivisionsZ) then
-                subdivisions[index].endPos.z = subdivisions[index].endPos.z - signum(subdivisions[index].endPos.z)
-            end
+            subdivisions[index].endPos.z = subdivisions[index].endPos.z - signum(subdivisions[index].endPos.z)
 
             subdivisions[index].startPos = subdivisions[index].startPos:add(pos1)
             subdivisions[index].endPos = subdivisions[index].endPos:add(pos1)
+
+            if subdivisions[index].startPos.x > math.max(pos1.x, pos2.x) then
+                subdivisions[index].startPos.x = math.max(pos1.x, pos2.x)
+            end
+
+            if subdivisions[index].startPos.x < math.min(pos1.x, pos2.x) then
+                subdivisions[index].startPos.x = math.min(pos1.x, pos2.x)
+            end
+
+            if subdivisions[index].startPos.z > math.max(pos1.z, pos2.z) then
+                subdivisions[index].startPos.z = math.max(pos1.z, pos2.z)
+            end
+
+            if subdivisions[index].startPos.z < math.min(pos1.z, pos2.z) then
+                subdivisions[index].startPos.z = math.min(pos1.z, pos2.z)
+            end
 
             print(json.encode(subdivisions[index]))
         end
@@ -242,7 +254,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         local lastZWall = value.startPos.z
 
-        for y = 1, yDist+1, 1 do
+        for y = 1, yDist + 1, 1 do
             for z = 1, zDist, 1 do
                 for x = 1, xDist, 1 do
                     pos, tmpInstructions = movement.move(pos, "forward", dir)
