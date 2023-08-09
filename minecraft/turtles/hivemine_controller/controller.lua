@@ -126,6 +126,14 @@ local fuelConsumingFunctions = {
     turtle.back
 }
 
+local function signum(number) -- counts 0 as positive
+    if number < 0 then
+       return -1
+    else
+       return 1
+    end
+end
+
 function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     local wholeSize = pos1:sub(pos2)
     wholeSize = vector.new(math.abs(wholeSize.x), math.abs(wholeSize.y), math.abs(wholeSize.z))
@@ -155,11 +163,11 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
             end
 
             if (x < subdivisionsX) then
-                subdivisions[index].endPos.x = subdivisions[index].endPos.x - 1
+                subdivisions[index].endPos.x = subdivisions[index].endPos.x - signum(subdivisions[index].endPos.x)
             end
 
             if (z < subdivisionsZ) then
-                subdivisions[index].endPos.z = subdivisions[index].endPos.z - 1
+                subdivisions[index].endPos.z = subdivisions[index].endPos.z - signum(subdivisions[index].endPos.z)
             end
 
             subdivisions[index].startPos = subdivisions[index].startPos:add(pos1)
