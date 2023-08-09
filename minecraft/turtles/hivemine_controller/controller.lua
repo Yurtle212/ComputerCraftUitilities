@@ -242,7 +242,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         local lastZWall = value.startPos.z
 
-        for y = 1, yDist, 1 do
+        for y = 1, yDist+1, 1 do
             for z = 1, zDist, 1 do
                 for x = 1, xDist, 1 do
                     pos, tmpInstructions = movement.move(pos, "forward", dir)
@@ -292,7 +292,7 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
                 value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
             end
 
-            if (y < yDist) then
+            if (y <= yDist) then
                 pos, tmpInstructions = movement.move(pos, "down", dir)
                 value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
