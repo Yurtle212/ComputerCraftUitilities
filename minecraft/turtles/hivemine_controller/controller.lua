@@ -200,7 +200,7 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
                 subdivisions[index].endPos.z = math.min(pos1.z, pos2.z)
             end
 
-            print(json.encode(subdivisions[index]))
+            -- print(json.encode(subdivisions[index]))
         end
     end
     return subdivisions
