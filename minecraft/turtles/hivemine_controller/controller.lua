@@ -525,7 +525,6 @@ function DeployMiner(instructions, rsBridge, modem, cost, pos, dir)
         end
 
         modem.transmit(1, 1, instructionMessage)
-        sleep(0)
     end
 
     -- print("sent " .. instructionIndex .. " instructions")
