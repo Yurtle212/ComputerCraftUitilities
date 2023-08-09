@@ -273,7 +273,11 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
                 end
             end
 
-            lastZWall = pos.z
+            if lastZWall == value.startPos.z then
+                lastZWall = value.endPos.z
+            else
+                lastZWall = value.startPos.z
+            end
 
             for x = 1, xDist, 1 do
                 pos, tmpInstructions = movement.move(pos, "forward", dir)
