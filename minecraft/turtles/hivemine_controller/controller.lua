@@ -185,6 +185,22 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
                 subdivisions[index].startPos.z = math.min(pos1.z, pos2.z)
             end
 
+            if subdivisions[index].endPos.x > math.max(pos1.x, pos2.x) then
+                subdivisions[index].endPos.x = math.max(pos1.x, pos2.x)
+            end
+
+            if subdivisions[index].endPos.x < math.min(pos1.x, pos2.x) then
+                subdivisions[index].endPos.x = math.min(pos1.x, pos2.x)
+            end
+
+            if subdivisions[index].endPos.z > math.max(pos1.z, pos2.z) then
+                subdivisions[index].endPos.z = math.max(pos1.z, pos2.z)
+            end
+
+            if subdivisions[index].endPos.z < math.min(pos1.z, pos2.z) then
+                subdivisions[index].endPos.z = math.min(pos1.z, pos2.z)
+            end
+
             print(json.encode(subdivisions[index]))
         end
     end
