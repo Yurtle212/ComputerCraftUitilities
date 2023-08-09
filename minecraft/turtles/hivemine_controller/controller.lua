@@ -215,14 +215,79 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         pos, dir, tmpInstructions = movement.MoveTo(pos, dir, value.startPos)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
+        if (value.startPos.x > value.endPos.x) then
+            dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-x"])
+            value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+        else
+            dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-x"])
+            value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+        end
+
         -- mine
 
         value.instructions[#value.instructions + 1] = "digplot"
 
-        local xDist = (value.endPos.x - value.startPos.x)
-        local yDist = (value.endPos.y - value.startPos.y)
-        local zDist = (value.endPos.z - value.startPos.z)
+        local xDist = math.abs(value.endPos.x - value.startPos.x)
+        local yDist = math.abs(value.endPos.y - value.startPos.y)
+        local zDist = math.abs(value.endPos.z - value.startPos.z)
         local amount = xDist * yDist * zDist
+
+        local lastZWall = value.startPos.z
+
+        for y = 1, yDist, 1 do
+            for z = 1, zDist, 1 do
+                for x = 1, xDist, 1 do
+                    pos, tmpInstructions = movement.move(pos, "forward", dir)
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                end
+
+                local tmpDir = dir
+
+                if lastZWall == value.startPos.z then
+                    if value.startPos.z > value.endPos.z then
+                        dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-z"])
+                        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                    else
+                        dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+z"])
+                        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                    end
+                else
+                    if value.startPos.z > value.endPos.z then
+                        dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+z"])
+                        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                    else
+                        dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-z"])
+                        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                    end
+                end
+
+                pos, tmpInstructions = movement.move(pos, "forward", dir)
+                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+
+                if tmpDir == movement.directions["+x"] then
+                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-x"])
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                else
+                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
+                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+                end
+            end
+
+            lastZWall = pos.z
+
+            for x = 1, xDist, 1 do
+                pos, tmpInstructions = movement.move(pos, "forward", dir)
+                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+            end
+
+            if (y < yDist) then
+                pos, tmpInstructions = movement.move(pos, "down", dir)
+                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
+
+                dir, value.instructions[#value.instructions + 1] = movement.turnDirection(dir, "left")
+                dir, value.instructions[#value.instructions + 1] = movement.turnDirection(dir, "left")
+            end
+        end
 
         -- return to start location
 
@@ -511,17 +576,18 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
 
     local travelCost = 0
 
-    dir, tmp, travelInstructions = CalculateTravelPath(pos, pos1, dir, Config["travelHeight"])
-    travelCost = travelCost + tmp
-    dir, tmp, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir,
-        Config["travelHeight"], true)
-    travelCost = travelCost + tmp
-
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     print(#subdivisions .. " bots")
 
+    dir, tmp, travelInstructions = CalculateTravelPath(pos, pos1, dir, Config["travelHeight"])
+    travelCost = travelCost + tmp
+
     local instructions = CalculateMiningPaths(pos1, subdivisions, dir)
     instructions = reverse(instructions)
+
+    dir, tmp, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y + 1, Position.z), dir,
+        Config["travelHeight"], true)
+    travelCost = travelCost + tmp
 
     local cost = CalculateCosts(travelCost, instructions)
     print("Cost: " .. cost)
