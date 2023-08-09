@@ -206,21 +206,21 @@ function GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     return subdivisions
 end
 
-function CalculateTravelPath(spawnPos, destPos, dir, travelHeight, dig)
+function CalculateTravelPath(spawnPos, destPos, dir, travelHeight, digDown)
     local cost = 0
     local instructions = {}
     local tmpInstructions = {}
     local pos = vector.new(spawnPos.x, spawnPos.y, spawnPos.z)
 
     if pos.y < travelHeight then
-        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z), dig)
+        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(pos.x, travelHeight, pos.z), true)
         instructions = movement.TableConcat(instructions, tmpInstructions)
     end
 
-    pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z), dig)
+    pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(destPos.x, travelHeight, destPos.z), true)
     instructions = movement.TableConcat(instructions, tmpInstructions)
 
-    pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z), dig)
+    pos, dir, tmpInstructions = movement.MoveTo(pos, dir, vector.new(destPos.x, destPos.y, destPos.z), digDown)
     instructions = movement.TableConcat(instructions, tmpInstructions)
 
     for i = 1, #instructions, 1 do
@@ -618,14 +618,14 @@ function DeployMiners(pos1, pos2, subdivisionsX, subdivisionsZ)
     local subdivisions = GetMiningSubdivisions(pos1, pos2, subdivisionsX, subdivisionsZ)
     print(#subdivisions .. " bots")
 
-    dir, tmp, travelInstructions = CalculateTravelPath(pos, pos1, dir, Config["travelHeight"])
+    dir, tmp, travelInstructions = CalculateTravelPath(pos, pos1, dir, Config["travelHeight"], true)
     travelCost = travelCost + tmp
 
     local instructions = CalculateMiningPaths(pos1, subdivisions, dir)
     instructions = reverse(instructions)
 
     dir, tmp, travelInstructionsBack = CalculateTravelPath(pos1, vector.new(Position.x, Position.y, Position.z), dir,
-        Config["travelHeight"], true)
+        Config["travelHeight"], false)
     travelCost = travelCost + tmp
 
     local cost = CalculateCosts(travelCost, instructions)
