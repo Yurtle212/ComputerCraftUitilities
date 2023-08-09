@@ -210,11 +210,6 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
         local dir = sDir
         local pos = vector.new(startPos.x, startPos.y, startPos.z)
 
-        local distFromStart = value.startPos:sub(startPos)
-
-        local baseStartDir = dir
-        local baseStartPos = pos
-
         -- go to assigned area
 
         pos, dir, tmpInstructions = movement.MoveTo(pos, dir, value.startPos)
@@ -222,73 +217,19 @@ function CalculateMiningPaths(startPos, subdivisions, sDir)
 
         -- mine
 
-        dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
-        value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-
         value.instructions[#value.instructions + 1] = "digplot"
-
-        local positiveX = true
-        local positiveZ = true
 
         local xDist = (value.endPos.x - value.startPos.x)
         local yDist = (value.endPos.y - value.startPos.y)
         local zDist = (value.endPos.z - value.startPos.z)
         local amount = xDist * yDist * zDist
 
-        local startDir = dir
-
-        for y = 1, yDist, 1 do
-            for z = 1, zDist, 1 do
-                for x = 1, xDist, 1 do
-                    pos, tmpInstructions = movement.move(pos, "forward", dir)
-                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-                end
-
-                if (positiveZ) then
-                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+z"])
-                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-                else
-                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-z"])
-                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-                end
-
-                pos, tmpInstructions = movement.move(pos, "forward", dir)
-                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-
-                if (positiveX) then
-                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["-x"])
-                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-                else
-                    dir, tmpInstructions = movement.RotateTo(dir, movement.directions["+x"])
-                    value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-                end
-
-                positiveX = not positiveX
-            end
-
-            for x = 1, xDist, 1 do
-                pos, tmpInstructions = movement.move(pos, "forward", dir)
-                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-            end
-
-            if (y < yDist) then
-                pos, tmpInstructions = movement.move(pos, "down", dir)
-                value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
-
-                dir, value.instructions[#value.instructions + 1] = movement.turnDirection(dir, "left")
-                dir, value.instructions[#value.instructions + 1] = movement.turnDirection(dir, "left")
-            end
-
-            positiveZ = not positiveZ
-            positiveX = not positiveX
-        end
-
         -- return to start location
 
-        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, startPos)
+        dir, tmpInstructions = movement.RotateTo(dir, sDir)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
-        dir, tmpInstructions = movement.RotateTo(dir, sDir)
+        pos, dir, tmpInstructions = movement.MoveTo(pos, dir, startPos)
         value.instructions = movement.TableConcat(value.instructions, tmpInstructions)
 
         value.instructions[#value.instructions + 1] = "returning"
